@@ -1,0 +1,44 @@
+@import "tailwindcss";
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade {
+  animation: fadeIn 0.35s ease;
+}
+
+.noti-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.noti {
+  padding: 10px 14px;
+  border-radius: 8px;
+  color: white;
+  font-size: 14px;
+  animation: fadeIn 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.noti.info { background: #3b82f6; }
+.noti.success { background: #22c55e; }
+.noti.error { background: #ef4444; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

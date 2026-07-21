@@ -1,17 +1,73 @@
----
+  --- 
+  import Gestion from "../components/Gestion.astro";
+  import Sidebar from "../components/Sidebar.astro";
+  import Header from "../components/Header.astro";
+  import Dashboard from "../components/Dashboard.astro";
+  import Reportes from "../components/Reportes.astro";
+  import Registro from "../components/Registro.astro";
+  import Login from "../components/Login.astro";
+  import Historial from "../components/Historial.astro";
+  import Actividades from "../components/Actividades.astro";
+  import MainLayout from "../layouts/MainLayout.astro";
+  import Modals from "../components/Modals.astro";
+  ---
 
----
+          <MainLayout>
+  <!-- ===================== LOGIN ===================== -->
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+                <Login />
+
+  <!-- ===================== CONTAINER ===================== -->
+
+                <div id="container"class="hidden flex flex-col md:flex-row h-screen w-full overflow-hidden relative">
+
+  <!-- ===================== SIDEBAR ===================== -->
+
+                <Sidebar />
+
+  <!-- ===================== MAIN ===================== -->
+
+                <main class="flex-1 p-4 md:p-8 lg:p-10 overflow-y-auto overflow-x-hidden min-w-0">
+
+  <!-- ===================== HEADER ===================== -->
+
+                <Header />
+
+  <!-- ===================== DASHBOARD ===================== -->
+
+                <Dashboard />
+
+  <!-- ===================== REPORTES ===================== -->
+
+                <Reportes />
+                
+  <!-- ===================== REGISTRO ===================== -->
+
+                <Registro />
+
+  <!-- ===================== GESTION ===================== -->
+
+                <Gestion />
+
+<!-- ===================== HISTORIAL ===================== -->
+
+                <Historial />
+
+<!-- ===================== ACTIVIDADES ===================== -->
+
+                <Actividades />
+
+  <!-- ===================== MODALS ===================== -->
+
+                <Modals />
+
+              </main>
+
+            </div>
+
+  <!-- ===================== JS===================== -->
+  
+            <div id="noti-stack" class="fixed bottom-5 right-5 flex flex-col gap-2 z-50"></div>
+
+          </MainLayout>
+

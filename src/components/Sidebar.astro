@@ -1,0 +1,92 @@
+<aside class="w-full md:w-60 lg:w-64 bg-slate-900 text-white p-4 md:p-6 md:min-h-screen">
+
+  <h1 class="text-3xl font-bold mb-10">
+    Área de RH
+  </h1>
+
+  <div class="mb-10 border border-slate-700 rounded-xl p-4">
+
+    <p class="text-sm text-slate-400">
+      Usuario activo
+    </p>
+
+    <h3
+      id="usuarioActivo"
+      class="text-lg font-bold text-white"
+    >
+      Admin
+    </h3>
+
+    <p
+      id="rolActivo"
+      class="text-cyan-400 text-sm"
+    >
+      Administrador
+    </p>
+
+  </div>
+
+  <nav class="space-y-4 text-lg">
+
+    <a
+      id="btn-dashboard"
+      onclick="cambiarSeccion('dashboard')"
+      class="block hover:text-cyan-400 cursor-pointer transition-all duration-300"
+    >
+      Dashboard
+    </a>
+
+    <a
+      id="btn-registro"
+      onclick="cambiarSeccion('registro')"
+      class="block hover:text-cyan-400 cursor-pointer transition-all duration-300"
+    >
+      Registro
+    </a>
+
+    <a
+      id="btn-gestion"
+      onclick="cambiarSeccion('gestion')"
+      class="block hover:text-cyan-400 cursor-pointer transition-all duration-300"
+    >
+      Base de postulantes
+    </a>
+
+    <a
+      id="btn-reportes"
+      onclick="cambiarSeccion('reportes')"
+      class="block hover:text-cyan-400 cursor-pointer transition-all duration-300"
+    >
+      Reportes
+    </a>
+
+    <a
+      id="btn-historial"
+      onclick="cambiarSeccion('historial')"
+      class="block hover:text-cyan-400 cursor-pointer transition-all duration-300"
+    >
+      Historial
+    </a>
+
+    <a
+      id="btn-actividades"
+      onclick="cambiarSeccion('actividades')"
+      class="block hover:text-cyan-400 cursor-pointer transition-all duration-300"
+    >
+      Actividades
+    </a>
+
+  </nav>
+
+  <div class="mt-20">
+
+    <button
+      onclick="logout()"
+      class="w-full bg-slate-800 hover:bg-red-500 text-white py-2 rounded-lg transition-all duration-300"
+    >
+      Cerrar sesión
+    </button>
+
+  </div>
+
+</aside>

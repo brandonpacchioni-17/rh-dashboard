@@ -1,0 +1,53 @@
+<div id="seccion-registro" class="hidden transition-all duration-300 animate-fade">
+
+  <div class="card bg-white p-8 rounded-3xl shadow-xl border border-slate-200">
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+      
+
+      <input
+        id="registroNombres"
+        type="text"
+        placeholder="Nombres"
+        class="registro-input border p-3 rounded-lg"
+      />
+      
+      <input
+        id="registroApellidos"
+        type="text"
+        placeholder="Apellidos"
+        class="registro-input border p-3 rounded-lg"
+      />
+
+      <input
+        id="registroDni"
+        type="text"
+        placeholder="DNI"
+        class="registro-input border p-3 rounded-lg"
+      />
+
+      <input
+        id="registroActividad"
+        type="text"
+        placeholder="Puesto"
+        class="registro-input border p-3 rounded-lg"
+      />
+
+      <input
+        id="registroFecha"
+        type="date"
+        class="border p-3 rounded-lg"
+      />
+
+    </div>
+
+    <button
+      onclick="registroAutomatico()"
+      class="mt-6 bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-lg"
+    >
+      Registrar empleado
+    </button>
+
+  </div>
+
+</div>

@@ -1,0 +1,297 @@
+<!-- ===================== MODAL AGREGAR ===================== -->
+
+<div id="modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center p-4">
+
+  <div class="card bg-white p-6 rounded-2xl shadow max-h-[90vh] overflow-y-auto">
+
+    <h3 class="text-xl font-bold mb-4">
+      Agregar empleado
+    </h3>
+
+    <div class="mb-3">
+
+      <input
+        id="nombre"
+        placeholder="Nombre"
+        class="border p-2 w-full rounded-lg"
+      />
+
+      <p id="error-nombre" class="text-red-500 text-sm hidden">
+        El nombre es obligatorio
+      </p>
+
+      <p id="error-existe" class="text-red-500 text-sm hidden">
+        Este empleado ya existe
+      </p>
+
+      
+    </div>
+
+        <input
+      id="dni"
+      placeholder="DNI"
+      maxlength="8"
+      class="border p-2 w-full rounded-lg mt-2"
+    />
+
+    <div class="mb-3">
+
+      <input
+        id="actividad"
+        placeholder="Puesto"
+        class="border p-2 w-full rounded-lg"
+      />
+
+     
+      <p id="error-actividad" class="text-red-500 text-sm hidden">
+        La actividad es obligatoria
+      </p>
+
+      <label class="block mb-2 font-semibold">
+        Fecha de postulación
+      </label>
+
+      <input
+        id="fechaPostulacion"
+        type="date"
+        max={new Date().toISOString().split("T")[0]}
+        class="border p-2 w-full mt-3 mb-3 rounded-lg"
+      />
+
+      <p id="error-fechaPostulacion" class="text-red-500 text-sm hidden">
+        La fecha de postulación es obligatoria
+      </p>
+
+    </div>
+
+    <div class="mb-3">
+
+      <select
+        id="area"
+        class="border p-2 w-full mb-3 rounded-lg bg-white text-black"
+      >
+        <option value="">
+          -- Seleccionar área --
+        </option>
+      </select>
+
+      <p id="error-area" class="text-red-500 text-sm hidden">
+        El área es obligatoria
+      </p>
+
+      <button
+        onclick="eliminarArea()"
+        class="mt-5 mb-4 bg-red-500 text-white px-2 py-1 rounded-lg"
+      >
+        Eliminar área
+      </button>
+
+      <input
+        id="nueva-area"
+        placeholder="Nueva área (opcional)"
+        class="border p-2 w-full mb-3 rounded-lg"
+      />
+
+      <div
+        id="sugerencias-area"
+        class="border rounded-lg shadow hidden"
+      ></div>
+
+      <p id="error-area-existe" class="text-red-500 text-sm hidden">
+        Esa área ya existe
+      </p>
+
+    </div>
+
+    <div
+  id="boxFechaIngreso"
+  class="hidden"
+  >
+
+    <label class="block mb-2 font-semibold">
+      Fecha de ingreso
+    </label>
+
+    <input
+      id="fechaIngreso"
+      type="date"
+      class="border p-2 w-full mb-4 rounded-lg"
+    />
+
+
+</div>
+
+ 
+    <select
+      id="etapa"
+      class="border p-2 w-full mb-4 rounded-lg bg-white text-black"
+    >
+
+      <option>Postulante</option>
+
+      <option>Postulante trunco</option>
+
+      <option>Entrevista virtual</option>
+
+      <option>Entrevista presencial</option>
+
+      <option>Seleccionado</option>
+
+      <option>Contratado</option>
+
+    </select>
+
+
+    
+    <div class="flex justify-end gap-2">
+
+      <button
+        onclick="cerrarModal()"
+        class="px-4 py-2 bg-gray-300 rounded-lg"
+      >
+        Cancelar
+      </button>
+
+      <button
+        id="btnGuardar"
+        onclick="guardarEmpleado()"
+        class="px-4 py-2 bg-slate-900 text-white rounded-lg"
+      >
+        Guardar
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ===================== MODAL ELIMINAR ===================== -->
+
+<div
+  id="modalEliminar"
+  class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+>
+
+  <div class="card bg-white p-6 rounded-2xl shadow-2xl w-full max-w-md">
+
+    <h3 class="text-2xl font-bold mb-3 text-red-500">
+      Confirmar eliminación
+    </h3>
+
+    <p
+      id="textoEliminar"
+      class="mb-6 text-slate-700"
+    >
+      ¿Eliminar a este empleado del sistema?
+    </p>
+
+    <div class="flex justify-end gap-3">
+
+      <button
+        onclick="cerrarModalEliminar()"
+        class="px-4 py-2 rounded-lg bg-slate-300 hover:bg-slate-400 transition-all"
+      >
+        Cancelar
+      </button>
+
+      <button
+        id="btnConfirmarEliminar"
+        class="px-4 py-2 rounded-lg bg-red-500 hover:bg-red-600 text-white transition-all"
+      >
+        Eliminar
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ===================== Eliminar actividad ========== -->
+
+
+<div
+  id="modalEliminarActividad"
+  class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+>
+
+  <div
+    class="bg-white dark:bg-slate-800 p-6 rounded-xl w-[90%] max-w-md"
+  >
+
+    <h2 class="text-xl font-bold mb-4 dark:text-white">
+      Confirmar eliminación
+    </h2>
+
+    <p
+      id="textoEliminarActividad"
+      class="mb-6 dark:text-slate-300"
+    >
+      ¿Seguro que deseas eliminar esta actividad?
+    </p>
+
+    <div class="flex justify-end gap-3">
+
+      <button
+        onclick="cerrarModalEliminarActividad()"
+        class="px-4 py-2 rounded bg-slate-300"
+      >
+        Cancelar
+      </button>
+
+      <button
+        id="btnConfirmarEliminarActividad"
+        class="px-4 py-2 rounded bg-red-500 text-white"
+      >
+        Eliminar
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ===================== PERFIL ===================== -->
+
+<div
+  id="modalPerfil"
+  class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50"
+>
+
+  <div
+    id="perfilContenido"
+    class="
+      pr-4
+      bg-white dark:bg-slate-800
+      rounded-2xl
+      w-[95%]
+      max-w-2xl
+      h-[90vh]
+      overflow-hidden
+      p-6
+      shadow-2xl
+      relative
+      scale-95
+      opacity-0
+      transition-all
+      duration-300
+    "
+  >
+
+    <button
+      onclick="cerrarPerfil()"
+      class="absolute top-4 right-10 z-50 text-slate-500 hover:text-red-500 text-xl"
+    >
+      ✕
+    </button>
+
+    <div
+      id="perfilBody"
+      class="h-full overflow-y-auto pr-10"
+    ></div>
+
+  </div>
+
+</div>
