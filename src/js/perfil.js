@@ -392,11 +392,15 @@ export function cerrarPerfil() {
 
 }
 
-  const modal =
+const modal =
     document.getElementById("modalPerfil");
+
+if (modal) {
 
   modal.classList.add("hidden");
   modal.classList.remove("flex");
+
+}
 
   // ===================== OBSERVACIONES =====================
 

@@ -8,7 +8,7 @@ import { cargarAreas } from "./ui.js";
 import { areas } from "./areas.js";
 import { limpiarHistorial } from "./historial.js";
 import { abrirPerfil, cerrarPerfil, agregarObservacion } from "./perfil.js";
-
+import "./postulacion.js";
 
 
 
@@ -54,9 +54,16 @@ function renderSugerencias(valor) {
   });
 }
 
-document.getElementById("nueva-area").addEventListener("input", (e) => {
-  renderSugerencias(e.target.value);
-});
+const inputNuevaArea =
+  document.getElementById("nueva-area");
+
+if (inputNuevaArea) {
+
+  inputNuevaArea.addEventListener("input", (e) => {
+    renderSugerencias(e.target.value);
+  });
+
+}
 
 
 // ===================== Cargar areas =====================
@@ -64,22 +71,63 @@ document.getElementById("nueva-area").addEventListener("input", (e) => {
 cargarAreas();
 
 
-document.getElementById("area").addEventListener("change", () => {
-  const select = document.getElementById("area");
-  const inputNueva = document.getElementById("nueva-area");
+const selectArea =
+  document.getElementById("area");
 
-  if (select.value === "") {
-    inputNueva.classList.remove("hidden");
-  } else {
-    inputNueva.classList.add("hidden");
-    inputNueva.value = "";
-  }
-});
+
+if (selectArea) {
+
+  selectArea.addEventListener("change", () => {
+
+    const inputNueva =
+      document.getElementById("nueva-area");
+
+
+    if (!inputNueva) return;
+
+
+    if (selectArea.value === "") {
+
+      inputNueva.classList.remove("hidden");
+
+    } else {
+
+      inputNueva.classList.add("hidden");
+      inputNueva.value = "";
+
+    }
+
+  });
+
+}
 
 // ===================== Duplicado Tiempo Real =====================
 
-document.getElementById("nombre").addEventListener("input", validarDuplicadoTiempoReal);
-document.getElementById("area").addEventListener("input", validarDuplicadoTiempoReal);
+const inputNombre =
+  document.getElementById("nombre");
+
+const inputArea =
+  document.getElementById("area");
+
+
+if (inputNombre) {
+
+  inputNombre.addEventListener(
+    "input",
+    validarDuplicadoTiempoReal
+  );
+
+}
+
+
+if (inputArea) {
+
+  inputArea.addEventListener(
+    "input",
+    validarDuplicadoTiempoReal
+  );
+
+}
 
 
 // ===================== BARRA LATERAL =====================
@@ -329,23 +377,47 @@ window.iniciarSesion = () => {
 
 function mostrarSistema() {
 
-  
+  const loginScreen =
+    document.getElementById("loginScreen");
 
-  document
-    .getElementById("loginScreen")
-    .classList.add("hidden");
+  const container =
+    document.getElementById("container");
 
-  document
-    .getElementById("container")
-    .classList.remove("hidden");
+
+  if (loginScreen) {
+    loginScreen.classList.add("hidden");
+  }
+
+
+  if (container) {
+    container.classList.remove("hidden");
+  }
+
 
   const usuario = obtenerUsuario();
 
-  document.getElementById("usuarioActivo").innerText =
-  usuario.usuario;
+  const usuarioActivo =
+    document.getElementById("usuarioActivo");
 
-  document.getElementById("rolActivo").innerText =
-  usuario.rol.toUpperCase();
+  const rolActivo =
+    document.getElementById("rolActivo");
+
+
+  if (usuarioActivo && usuario) {
+
+    usuarioActivo.innerText =
+      usuario.usuario;
+
+  }
+
+
+  if (rolActivo && usuario) {
+
+    rolActivo.innerText =
+      usuario.rol.toUpperCase();
+
+  }
+
 }
 
 // ===================== VALIDAR SESIÓN =====================
@@ -398,7 +470,11 @@ const selectEtapa =
 const boxFechaIngreso =
   document.getElementById("boxFechaIngreso");
 
+
 function validarFechaIngreso() {
+
+  if (!selectEtapa || !boxFechaIngreso) return;
+
 
   if (
     selectEtapa.value === "Contratado"
@@ -414,16 +490,27 @@ function validarFechaIngreso() {
 
 }
 
-selectEtapa.addEventListener(
-  "change",
-  validarFechaIngreso
-);
+
+if (selectEtapa) {
+
+  selectEtapa.addEventListener(
+    "change",
+    validarFechaIngreso
+  );
+
+}
+
 
 validarFechaIngreso();
 
 // ===================== INIT =====================
-if (localStorage.getItem("darkMode") === "activo") {
+if (
+  localStorage.getItem("darkMode") === "activo" &&
+  document.getElementById("container")
+) {
+
   window.toggleDarkMode();
+
 }
 
   const input = document.getElementById("nueva-area");
@@ -433,18 +520,38 @@ if (input) {
 
 
 
-render();
-actualizarVista();
+if (document.getElementById("container")) {
+
+  render();
+  actualizarVista();
+
+}
 
 
 
 
-document
-  .getElementById("btnConfirmarEliminar")
-  .addEventListener("click", actions.eliminarEmpleado);
-document
-  .getElementById("btnConfirmarEliminarActividad")
-  .addEventListener(
+const btnConfirmarEliminar =
+  document.getElementById("btnConfirmarEliminar");
+
+if (btnConfirmarEliminar) {
+
+  btnConfirmarEliminar.addEventListener(
+    "click",
+    actions.eliminarEmpleado
+  );
+
+}
+
+
+const btnConfirmarEliminarActividad =
+  document.getElementById("btnConfirmarEliminarActividad");
+
+
+if (btnConfirmarEliminarActividad) {
+
+  btnConfirmarEliminarActividad.addEventListener(
     "click",
     actions.eliminarActividad
   );
+
+}

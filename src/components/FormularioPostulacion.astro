@@ -1,16 +1,53 @@
 ---
 import Paso1 from "./formulario/Paso1.astro";
 import Paso2 from "./formulario/Paso2.astro";
+import Paso3 from "./formulario/Paso3.astro";
+import Paso4 from "./formulario/Paso4.astro";
 ---
+
+
 
 <section class="min-h-screen bg-slate-100 flex items-center justify-center px-6 py-16">
 
   <div class="bg-white rounded-3xl shadow-xl w-full max-w-4xl p-10">
 
-    <Paso1 />
+<a
+    href="/empleos"
+    class="inline-flex items-center gap-2 mb-6 text-slate-600 hover:text-blue-600 transition"
+>
+    <span class="text-xl">
+        ←
+    </span>
 
-    <!-- Temporalmente dejamos oculto el Paso 2 -->
-    <!-- <Paso2 /> -->
+    Volver al inicio
+</a>
+
+<div id="paso-1">
+
+  <Paso1 />
+
+</div>
+
+
+<div id="paso-2" class="hidden">
+
+  <Paso2 />
+
+</div>
+
+
+<div id="paso-3" class="hidden">
+
+  <Paso3 />
+
+</div>
+
+
+<div id="paso-4" class="hidden">
+
+  <Paso4 />
+
+</div>
 
   </div>
 
