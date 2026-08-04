@@ -548,6 +548,25 @@ if (input) {
 }
 
 
+const titulosModal =
+document.querySelectorAll(".tituloModal");
+
+titulosModal.forEach(t=>{
+
+    if(body.classList.contains("bg-slate-900")){
+
+        t.classList.remove("text-slate-800");
+        t.classList.add("text-white");
+
+    }else{
+
+        t.classList.remove("text-white");
+        t.classList.add("text-slate-800");
+
+    }
+
+});
+
 
 if (document.getElementById("container")) {
 
@@ -557,14 +576,6 @@ if (document.getElementById("container")) {
 }
 
 
-const titulosModal = document.querySelectorAll(".tituloModal");
-
-titulosModal.forEach(t => {
-
-  t.classList.toggle("text-slate-800");
-  t.classList.toggle("text-white");
-
-});
 
 const btnConfirmarEliminar =
   document.getElementById("btnConfirmarEliminar");

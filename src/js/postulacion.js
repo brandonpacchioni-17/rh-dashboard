@@ -95,7 +95,7 @@ if (btnSiguiente2) {
 
 
         disponibilidad:
-        document.querySelectorAll("#paso-2 select")[1].value
+        document.querySelectorAll("#paso-2 input")[2].value
 
 
     };
@@ -261,34 +261,32 @@ const nombreCV = document.getElementById("nombre-cv");
 
 let archivoCV = null;
 let archivoCVBase64 = "";
+let archivoBase64 = "";
 
 
 if (inputCV) {
 
     inputCV.addEventListener("change", () => {
 
-
         archivoCV = inputCV.files[0];
 
-        if (archivoCV) {
+        if (!archivoCV) return;
 
-            nombreCV.textContent =
-                `CV seleccionado: ${archivoCV.name}`;
+        nombreCV.textContent =
+            `CV seleccionado: ${archivoCV.name}`;
 
-            nombreCV.classList.remove("hidden");
+        nombreCV.classList.remove("hidden");
 
-            const lector = new FileReader();
 
-            lector.onload = (e) => {
+        const lector = new FileReader();
 
-                archivoCVBase64 = e.target.result;
+        lector.onload = function(e){
 
-            };
+            archivoBase64 = e.target.result;
 
-            lector.readAsDataURL(archivoCV);
+        };
 
-        }
-
+        lector.readAsDataURL(archivoCV);
 
     });
 
@@ -334,21 +332,23 @@ btnEnviar.addEventListener("click", () => {
 
 
 
-   postulacion.final = {
+    postulacion.final = {
 
-    linkedin:
-    document.getElementById("linkedin").value,
+        linkedin:
+        document.getElementById("linkedin").value,
 
-    github:
-    document.getElementById("github").value,
+        github:
+        document.getElementById("github").value,
 
-    cvNombre:
-    archivoCV.name,
+        cv: {
 
-    cvData:
-    archivoCVBase64
+            nombre: archivoCV.name,
 
-};
+            archivo: archivoBase64
+
+        }
+
+    };
 
 const nuevoPostulante = {
 

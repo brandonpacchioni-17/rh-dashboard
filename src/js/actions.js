@@ -768,6 +768,8 @@ if (tituloProgreso) {
 
   const modalConfirmacion = document.getElementById("modal-confirmacion");
 
+  
+
 if (modalConfirmacion) {
 
   if (body.classList.contains("bg-slate-900")) {
@@ -782,6 +784,43 @@ if (modalConfirmacion) {
 
   }
 }
+
+const modalPostulante = document.querySelector("#modal-postulante .card");
+
+if (modalPostulante) {
+
+  if (body.classList.contains("bg-slate-900")) {
+
+    modalPostulante.classList.remove("bg-white");
+    modalPostulante.classList.add("bg-slate-800");
+
+  } else {
+
+    modalPostulante.classList.remove("bg-slate-800");
+    modalPostulante.classList.add("bg-white");
+
+  }
+
+}
+
+const modalCards = document.querySelectorAll(".modal-card");
+
+modalCards.forEach(card => {
+
+  if (body.classList.contains("bg-slate-900")) {
+
+    card.classList.remove("bg-slate-50");
+    card.classList.add("bg-slate-700");
+
+  } else {
+
+    card.classList.remove("bg-slate-700");
+    card.classList.add("bg-slate-50");
+
+  }
+
+});
+
   render();
 }
 
