@@ -658,11 +658,20 @@ selects.forEach(select => {
   const cards = document.querySelectorAll(".card");
   const inputsRegistro = document.querySelectorAll(".registro-input");
   const titulosCard = document.querySelectorAll(".tituloCard");
+  const numerosCard = document.querySelectorAll(".numeroCard");
 
   titulosCard.forEach(t => {
     t.classList.toggle("text-gray-500");
     t.classList.toggle("text-slate-300");
   });
+
+
+  numerosCard.forEach(n => {
+
+  n.classList.toggle("text-slate-800");
+  n.classList.toggle("text-white");
+
+});
 
   cards.forEach(card => {
     card.classList.toggle("bg-white");

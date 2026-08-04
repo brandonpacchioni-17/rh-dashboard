@@ -8,6 +8,7 @@ import { cargarAreas } from "./ui.js";
 import { areas } from "./areas.js";
 import { limpiarHistorial } from "./historial.js";
 import { abrirPerfil, cerrarPerfil, agregarObservacion } from "./perfil.js";
+import {  postulantes,  guardarPostulantes,  renderPostulantes} from "./postulantes.js";
 import "./postulacion.js";
 
 
@@ -158,6 +159,7 @@ function cambiarSeccion(seccion) {
 function actualizarVista() {
 
   const dashboard = document.getElementById("seccion-dashboard");
+  const postulantes = document.getElementById("seccion-postulantes");
   const registro = document.getElementById("seccion-registro");
   const gestion = document.getElementById("seccion-gestion");
   const reportes = document.getElementById("seccion-reportes");
@@ -167,6 +169,7 @@ function actualizarVista() {
   const titulo = document.getElementById("tituloPrincipal");
 
   const btnDashboard = document.getElementById("btn-dashboard");
+  const btnpostulantes = document.getElementById("btn-postulantes");
   const btnRegistro = document.getElementById("btn-registro");
   const btnGestion = document.getElementById("btn-gestion");
   const btnReportes = document.getElementById("btn-reportes");
@@ -187,18 +190,20 @@ function actualizarVista() {
 
 }
 
-  // ocultar secciones
-  if (dashboard) dashboard.classList.add("hidden");
-  if (registro) registro.classList.add("hidden");
-  if (gestion) gestion.classList.add("hidden");
-  if (reportes) reportes.classList.add("hidden");
-  if (historial) historial.classList.add("hidden"); 
-  if (actividades) actividades.classList.add("hidden");
+// ocultar secciones
+if (dashboard) dashboard.classList.add("hidden");
+if (postulantes) postulantes.classList.add("hidden");
+if (registro) registro.classList.add("hidden");
+if (gestion) gestion.classList.add("hidden");
+if (reportes) reportes.classList.add("hidden");
+if (historial) historial.classList.add("hidden"); 
+if (actividades) actividades.classList.add("hidden");
 
   // limpiar estilos botones
   
     [
   btnDashboard,
+  btnpostulantes,
   btnRegistro,
   btnGestion,
   btnReportes,
@@ -237,6 +242,30 @@ function actualizarVista() {
       "rounded-lg"
     );
   }
+
+
+// postulantes
+
+if (seccionActiva === "postulantes") {
+
+  if (postulantes) {
+    postulantes.classList.remove("hidden");
+  }
+
+  titulo.innerText = "Postulantes";
+
+  btnpostulantes.classList.add(
+    "text-cyan-400",
+    "bg-slate-800",
+    "border-l-4",
+    "border-cyan-400",
+    "pl-3",
+    "rounded-lg"
+  );
+
+renderPostulantes();
+
+}
 
   // registro
   if (seccionActiva === "registro") {
@@ -528,7 +557,14 @@ if (document.getElementById("container")) {
 }
 
 
+const titulosModal = document.querySelectorAll(".tituloModal");
 
+titulosModal.forEach(t => {
+
+  t.classList.toggle("text-slate-800");
+  t.classList.toggle("text-white");
+
+});
 
 const btnConfirmarEliminar =
   document.getElementById("btnConfirmarEliminar");
