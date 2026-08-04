@@ -1,4 +1,7 @@
+
 // ===================== POSTULANTES =====================
+
+import { notificar } from "./actions.js";
 
 export let postulantes =
   JSON.parse(
@@ -26,8 +29,41 @@ export function agregarPostulante(datos){
 
 }
 
+function limpiarRechazados(){
+
+const ahora = Date.now();
+
+const tresDias =
+3 * 24 * 60 * 60 * 1000;
+
+
+postulantes = postulantes.filter(p => {
+
+
+if(
+p.estado === "Rechazado" &&
+p.fechaRechazo
+){
+
+return ahora - p.fechaRechazo < tresDias;
+
+}
+
+
+return true;
+
+
+});
+
+
+guardarPostulantes();
+
+
+}
 
 export function renderPostulantes(){
+
+  limpiarRechazados();
 
   const tabla =
     document.getElementById("tabla-postulantes");
@@ -143,11 +179,60 @@ botonesAceptar.forEach(btn => {
 
     const index = btn.dataset.index;
 
-    postulantes[index].estado = "Aceptado";
+    const postulanteAceptado = postulantes[index];
+
+
+    postulanteAceptado.estado = "Aceptado";
+
+
+    // guardar como empleado
+    const empleados =
+    JSON.parse(localStorage.getItem("empleados")) || [];
+
+
+    empleados.push({
+
+      id: Date.now(),
+
+      nombre:
+      `${postulanteAceptado.nombres} ${postulanteAceptado.apellidos}`,
+
+      puesto:
+      postulanteAceptado.puesto,
+
+      area:
+      postulanteAceptado.area,
+
+      fechaIngreso:
+      new Date().toLocaleDateString(),
+
+      estado:
+      "Activo"
+
+    });
+
+
+    localStorage.setItem(
+      "empleados",
+      JSON.stringify(empleados)
+    );
+
+
+    // eliminar de postulantes
+    postulantes.splice(index,1);
+
 
     guardarPostulantes();
 
+
     renderPostulantes();
+
+
+notificar(
+  "Postulante aceptado correctamente. Fue enviado a Gestión",
+  "success"
+);
+
 
   });
 
@@ -160,6 +245,10 @@ botonesRechazar.forEach(btn => {
     const index = btn.dataset.index;
 
     postulantes[index].estado = "Rechazado";
+
+    postulantes[index].fechaRechazo =
+    Date.now();
+
 
     guardarPostulantes();
 
@@ -486,18 +575,55 @@ modalSubtexts.forEach(text => {
     modal.classList.remove("hidden");
     modal.classList.add("flex");
 
-    const btnVerCV =
-    document.getElementById("btn-ver-cv");
+const btnVerCV =
+document.getElementById("btn-ver-cv");
 
-    if(btnVerCV){
 
-        btnVerCV.addEventListener("click",()=>{
+if(btnVerCV){
 
-            window.open(p.cv.archivo,"_blank");
+    btnVerCV.addEventListener("click",()=>{
 
-        });
 
-    }
+        const ventana =
+        window.open(
+          "",
+          "_blank"
+        );
+
+
+        ventana.document.title =
+        p.cv.nombre;
+
+
+        ventana.document.body.style.margin = "0";
+
+
+        const iframe =
+        ventana.document.createElement("iframe");
+
+
+        iframe.src =
+        p.cv.archivo;
+
+
+        iframe.style.width =
+        "100%";
+
+        iframe.style.height =
+        "100vh";
+
+        iframe.style.border =
+        "none";
+
+
+        ventana.document.body.appendChild(
+          iframe
+        );
+
+
+    });
+
+}
 
 }
 
