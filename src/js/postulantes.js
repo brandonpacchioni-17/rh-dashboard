@@ -186,29 +186,37 @@ function mostrarPostulante(index){
 
     <div class="space-y-6">
 
-        <div class="bg-slate-50 rounded-xl p-5">
+        <div class="bg-slate-50 dark:bg-slate-700 rounded-xl p-5 transition-all">
 
-            <h3 class="text-lg font-bold mb-4">
+            <h3 class="text-lg font-bold mb-4 text-slate-800 dark:text-white">
                 👤 Datos personales
             </h3>
 
             <div class="grid md:grid-cols-2 gap-4">
 
-                <p><strong>Nombres:</strong> ${p.nombres}</p>
+                <p class="text-slate-700 dark:text-slate-200">
+                    <strong>Nombres:</strong> ${p.nombres}
+                </p>
 
-                <p><strong>Apellidos:</strong> ${p.apellidos}</p>
+                <p class="text-slate-700 dark:text-slate-200">
+                    <strong>Apellidos:</strong> ${p.apellidos}
+                </p>
 
-                <p><strong>Correo:</strong> ${p.correo}</p>
+                <p class="text-slate-700 dark:text-slate-200">
+                    <strong>Correo:</strong> ${p.correo}
+                </p>
 
-                <p><strong>Celular:</strong> ${p.celular}</p>
+                <p class="text-slate-700 dark:text-slate-200">
+                    <strong>Celular:</strong> ${p.celular}
+                </p>
 
             </div>
 
         </div>
 
-        <div class="bg-slate-50 rounded-xl p-5">
+        <div class="bg-slate-50 dark:bg-slate-700 rounded-xl p-5 transition-all">
 
-            <h3 class="text-lg font-bold mb-4">
+            <h3 class="text-lg font-bold mb-4 text-slate-800 dark:text-white">
                 💼 Información laboral
             </h3>
 
@@ -226,9 +234,9 @@ function mostrarPostulante(index){
 
         </div>
 
-        <div class="bg-slate-50 rounded-xl p-5">
+        <div class="bg-slate-50 dark:bg-slate-700 rounded-xl p-5 transition-all">
 
-            <h3 class="text-lg font-bold mb-4">
+            <h3 class="text-lg font-bold mb-4 text-slate-800 dark:text-white">
                 📝 Cuestionario
             </h3>
 
@@ -238,7 +246,7 @@ function mostrarPostulante(index){
 
                     <strong>¿Por qué deseas trabajar con nosotros?</strong>
 
-                    <p class="mt-2 text-slate-600">
+                    <p class="mt-2 text-slate-600 dark:text-slate-300">
                         ${p.motivacion}
                     </p>
 
@@ -248,7 +256,7 @@ function mostrarPostulante(index){
 
                     <strong>Habilidades</strong>
 
-                    <p class="mt-2 text-slate-600">
+                    <p class="mt-2 text-slate-600 dark:text-slate-300">
                         ${p.habilidades}
                     </p>
 
@@ -258,7 +266,7 @@ function mostrarPostulante(index){
 
                     <strong>Logro</strong>
 
-                    <p class="mt-2 text-slate-600">
+                    <p class="mt-2 text-slate-600 dark:text-slate-300">
                         ${p.logro}
                     </p>
 
