@@ -472,6 +472,7 @@ window.buscar = () => {
 
 // acciones
 window.abrirModal = actions.abrirModal;
+window.cerrarModal = actions.cerrarModal;
 window.agregarObservacion = agregarObservacion;
 window.abrirPerfil = abrirPerfil;
 window.cerrarPerfil = cerrarPerfil;
@@ -574,6 +575,60 @@ if (document.getElementById("container")) {
   actualizarVista();
 
 }
+
+// ACTUALIZAR POSTULANTES EN TIEMPO REAL
+
+// ACTUALIZAR POSTULANTES EN TIEMPO REAL
+
+window.addEventListener(
+  "postulante-agregado",
+  () => {
+
+    renderPostulantes();
+
+  }
+);
+
+window.addEventListener(
+  "storage",
+  (e) => {
+
+    if(e.key === "postulantes"){
+
+      renderPostulantes();
+
+    }
+
+  }
+);
+
+// ACTUALIZAR GESTIÓN EN TIEMPO REAL
+
+window.addEventListener(
+  "empleado-agregado",
+  () => {
+
+    render();
+
+  }
+);
+
+window.addEventListener("empleado-agregado", () => {
+
+    console.log("EVENTO EMPLEADO RECIBIDO");
+
+    render();
+
+});
+
+
+window.addEventListener("postulante-agregado", () => {
+
+    console.log("EVENTO POSTULANTE RECIBIDO");
+
+    renderPostulantes();
+
+});
 
 
 

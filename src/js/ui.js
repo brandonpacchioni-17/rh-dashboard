@@ -1,4 +1,4 @@
-import { empleados } from "./data.js";
+import { empleados, cargarEmpleados } from "./data.js";
 import { historial } from "./historial.js";
 import { obtenerRol } from "./auth.js";
 import { getFiltro, getBusqueda } from "./filters.js";
@@ -61,6 +61,8 @@ const tbody = document.getElementById("tabla-body");
 // ===================== RENDER =====================
 
 export function render() {
+
+  cargarEmpleados();
 
   const rol = obtenerRol();
 

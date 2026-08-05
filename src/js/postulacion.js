@@ -43,6 +43,9 @@ if (btnSiguiente1) {
         apellidos:
         document.querySelectorAll("#paso-1 input")[1].value,
 
+        dni:
+        document.getElementById("dni").value,
+
         correo:
         document.querySelectorAll("#paso-1 input")[2].value,
 

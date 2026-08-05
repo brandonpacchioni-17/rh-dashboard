@@ -1,6 +1,7 @@
 // ===================== DATA =====================
 
 export let empleados = JSON.parse(localStorage.getItem("empleados")) || [
+  
  {
   nombre: "Carlos Ramos",
   actividad: "Capacitación",
@@ -51,3 +52,16 @@ export function guardar() {
   );
 }
 
+export function cargarEmpleados(){
+
+  empleados.splice(
+    0,
+    empleados.length,
+    ...(
+      JSON.parse(
+        localStorage.getItem("empleados")
+      ) || []
+    )
+  );
+
+}

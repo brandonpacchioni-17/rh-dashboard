@@ -1,4 +1,3 @@
-
 // ===================== POSTULANTES =====================
 
 import { notificar } from "./actions.js";
@@ -23,9 +22,13 @@ export function guardarPostulantes(){
 
 export function agregarPostulante(datos){
 
-  postulantes.push(datos);
+    postulantes.push(datos);
 
-  guardarPostulantes();
+    guardarPostulantes();
+
+    window.dispatchEvent(
+        new CustomEvent("postulante-agregado")
+    );
 
 }
 
@@ -61,9 +64,43 @@ guardarPostulantes();
 
 }
 
+export function actualizarCardsPostulantes() {
+
+  const total =
+    document.getElementById("card-total-postulantes");
+
+  const evaluacion =
+    document.getElementById("card-evaluacion-postulantes");
+
+  const contratados =
+    document.getElementById("card-contratados-postulantes");
+
+  if (!total || !evaluacion || !contratados) return;
+
+  total.innerText = postulantes.length;
+
+  evaluacion.innerText =
+    postulantes.filter(
+      p => p.estado === "En evaluación"
+    ).length;
+
+  contratados.innerText =
+    postulantes.filter(
+      p => p.estado === "Aceptado"
+    ).length;
+
+}
+
 export function renderPostulantes(){
 
+  postulantes =
+JSON.parse(
+    localStorage.getItem("postulantes")
+) || [];
+
   limpiarRechazados();
+
+  actualizarCardsPostulantes();
 
   const tabla =
     document.getElementById("tabla-postulantes");
@@ -89,6 +126,8 @@ export function renderPostulantes(){
       </tr>
 
     `;
+
+    actualizarCardsPostulantes();
 
     return;
 
@@ -132,17 +171,37 @@ export function renderPostulantes(){
             Ver
         </button>
 
-        <button
-            class="btn-aceptar bg-green-600 text-white px-3 py-1 rounded-lg"
-            data-index="${index}">
-            Aceptar
-        </button>
+          ${p.estado !== "Aceptado" ? `
 
-        <button
-            class="btn-rechazar bg-red-500 text-white px-3 py-1 rounded-lg"
-            data-index="${index}">
-            Rechazar
-        </button>
+          <button
+          class="btn-aceptar bg-green-600 text-white px-3 py-1 rounded-lg"
+          data-index="${index}">
+          Aceptar
+          </button>
+
+          <button
+          class="btn-rechazar bg-red-500 text-white px-3 py-1 rounded-lg"
+          data-index="${index}">
+          Rechazar
+          </button>
+
+          ` : `
+
+          <div class="inline-flex items-center gap-2">
+
+          <span class="text-green-600 font-semibold">
+          ✓ Postulando
+          </span>
+
+          <button
+          class="btn-deshacer bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded-lg"
+          data-index="${index}">
+          Deshacer
+          </button>
+
+          </div>
+
+          `}
 
         </td>
 
@@ -150,6 +209,7 @@ export function renderPostulantes(){
 
 
   `).join("");
+  
 
   const botonesAceptar =
 document.querySelectorAll(".btn-aceptar");
@@ -159,6 +219,9 @@ document.querySelectorAll(".btn-rechazar");
 
 const botonesVer =
 document.querySelectorAll(".btn-ver");
+
+const botonesDeshacer =
+document.querySelectorAll(".btn-deshacer");
 
 
 botonesVer.forEach(btn => {
@@ -173,6 +236,8 @@ botonesVer.forEach(btn => {
 
 });
 
+
+
 botonesAceptar.forEach(btn => {
 
   btn.addEventListener("click", () => {
@@ -183,6 +248,8 @@ botonesAceptar.forEach(btn => {
 
 
     postulanteAceptado.estado = "Aceptado";
+
+    postulanteAceptado.fechaAceptacion = Date.now();
 
 
     // guardar como empleado
@@ -197,7 +264,10 @@ botonesAceptar.forEach(btn => {
       nombre:
       `${postulanteAceptado.nombres} ${postulanteAceptado.apellidos}`,
 
-      puesto:
+      dni:
+      postulanteAceptado.dni || "",
+
+      actividad:
       postulanteAceptado.puesto,
 
       area:
@@ -216,25 +286,68 @@ botonesAceptar.forEach(btn => {
       "empleados",
       JSON.stringify(empleados)
     );
-
-
-    // eliminar de postulantes
-    postulantes.splice(index,1);
-
-
+    
     guardarPostulantes();
 
 
     renderPostulantes();
 
-
-notificar(
-  "Postulante aceptado correctamente. Fue enviado a Gestión",
-  "success"
+    window.dispatchEvent(
+    new CustomEvent("empleado-agregado")
 );
 
 
+  notificar(
+    "Postulante aceptado correctamente. Fue enviado a Gestión",
+    "success"
+  );
+
+
   });
+
+});
+
+botonesDeshacer.forEach(btn => {
+
+    btn.addEventListener("click", () => {
+
+        const index = btn.dataset.index;
+
+        const postulante = postulantes[index];
+
+        // quitar estado de contratado
+        postulante.estado = "En evaluación";
+
+        delete postulante.fechaAceptacion;
+
+        // eliminar de empleados
+        const empleados =
+        JSON.parse(localStorage.getItem("empleados")) || [];
+
+        const nuevosEmpleados =
+        empleados.filter(e =>
+            e.nombre !== `${postulante.nombres} ${postulante.apellidos}`
+        );
+
+        localStorage.setItem(
+            "empleados",
+            JSON.stringify(nuevosEmpleados)
+        );
+
+        window.dispatchEvent(
+            new CustomEvent("empleado-agregado")
+        );
+
+        guardarPostulantes();
+
+        renderPostulantes();
+
+        notificar(
+            "La contratación fue revertida correctamente",
+            "warning"
+        );
+
+    });
 
 });
 
@@ -334,6 +447,12 @@ function mostrarPostulante(index){
                 </p>
 
                 <p class="modal-text text-slate-700">
+
+                <strong>DNI:</strong> ${p.dni || "No registrado"}
+
+                </p>
+
+                <p class="modal-text text-slate-700">
                     <strong>Fecha de postulación:</strong> ${p.fecha}
                 </p>
 
@@ -364,6 +483,32 @@ function mostrarPostulante(index){
                 <p class="modal-text text-slate-700">
                     <strong>Disponibilidad:</strong> ${p.disponibilidad}
                 </p>
+
+                                ${p.linkedin ? `
+                <p class="modal-text text-slate-700">
+                    <strong>LinkedIn:</strong>
+                    <a
+                        href="${p.linkedin}"
+                        target="_blank"
+                        class="text-blue-600 hover:underline"
+                    >
+                        Ver perfil
+                    </a>
+                </p>
+                ` : ""}
+
+                ${p.github ? `
+                <p class="modal-text text-slate-700">
+                    <strong>GitHub:</strong>
+                    <a
+                        href="${p.github}"
+                        target="_blank"
+                        class="text-blue-600 hover:underline"
+                    >
+                        Ver perfil
+                    </a>
+                </p>
+                ` : ""}
 
             </div>
 
