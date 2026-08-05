@@ -243,6 +243,57 @@ const progreso =
         </p>
       </div>
 
+  <div class="border rounded-xl p-4">
+
+    <p class="text-sm text-slate-500">
+      DNI
+    </p>
+
+    <p class="font-semibold dark:text-white">
+      ${emp.dni || "Sin registrar"}
+    </p>
+
+  </div>
+
+
+  <div class="border rounded-xl p-4">
+
+    <p class="text-sm text-slate-500">
+      Correo
+    </p>
+
+    <p class="font-semibold dark:text-white">
+      ${emp.correo || "Sin registrar"}
+    </p>
+
+  </div>
+
+
+  <div class="border rounded-xl p-4">
+
+    <p class="text-sm text-slate-500">
+      Celular
+    </p>
+
+    <p class="font-semibold dark:text-white">
+      ${emp.celular || "Sin registrar"}
+    </p>
+
+  </div>
+
+
+  <div class="border rounded-xl p-4">
+
+    <p class="text-sm text-slate-500">
+      Fecha de nacimiento
+    </p>
+
+    <p class="font-semibold dark:text-white">
+      ${emp.fechaNacimiento || "Sin registrar"}
+    </p>
+
+  </div>
+
       <div class="border rounded-xl p-4">
         <p class="text-sm text-slate-500">
           Etapa
@@ -288,7 +339,40 @@ const progreso =
           <div class="mt-6">
   <div>
 
+<div class="mt-6">
 
+<h3 class="text-lg font-bold mb-3 dark:text-white">
+  Información de registro
+</h3>
+
+
+<div class="border rounded-xl p-4">
+
+<p class="text-sm text-slate-500">
+Origen
+</p>
+
+<p class="font-semibold dark:text-white">
+${emp.origen || "Registro manual"}
+</p>
+
+</div>
+
+
+<div class="border rounded-xl p-4 mt-3">
+
+<p class="text-sm text-slate-500">
+Fecha de postulación
+</p>
+
+<p class="font-semibold dark:text-white">
+${emp.fecha || "Sin registrar"}
+</p>
+
+</div>
+
+
+</div>
     
   <h3 class="text-lg font-bold mb-3 dark:text-white">
     Historial de etapas

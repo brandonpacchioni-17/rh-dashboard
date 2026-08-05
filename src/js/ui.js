@@ -195,9 +195,6 @@ if (btnAgregar) {
 
           <td>
 
-            
-            
-
                 <button
                   onclick="abrirPerfil(${index})"
                   class="
@@ -208,10 +205,7 @@ if (btnAgregar) {
                 >
                   💬 Ver comentarios (${e.observaciones?.length || 0})
                 </button>
-
-            
-            
-
+                
             </td>
           
 

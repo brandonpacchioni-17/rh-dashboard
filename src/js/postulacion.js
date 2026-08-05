@@ -50,7 +50,10 @@ if (btnSiguiente1) {
         document.querySelectorAll("#paso-1 input")[2].value,
 
         celular:
-        document.querySelectorAll("#paso-1 input")[3].value
+        document.querySelectorAll("#paso-1 input")[3].value,
+
+        fechaNacimiento:
+        document.getElementById("fechaNacimiento").value
 
     };
 
@@ -371,11 +374,11 @@ const nuevoPostulante = {
     ...postulacion.final,
 
 
-    estado:"Pendiente",
+    estado:"En evaluación",
 
 
     fecha:
-    new Date().toLocaleDateString()
+    new Date().toISOString().split("T")[0]
 
 
 };

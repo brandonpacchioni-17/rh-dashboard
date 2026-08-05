@@ -10,6 +10,20 @@ export let postulantes =
 
 // ===================== GUARDAR =====================
 
+function convertirFecha(fecha){
+
+    if(!fecha) return "";
+
+    if(fecha.includes("-")){
+        return fecha;
+    }
+
+    const partes = fecha.split("/");
+
+    return `${partes[2]}-${partes[1].padStart(2,"0")}-${partes[0].padStart(2,"0")}`;
+
+}
+
 export function guardarPostulantes(){
 
   localStorage.setItem(
@@ -264,17 +278,70 @@ botonesAceptar.forEach(btn => {
       nombre:
       `${postulanteAceptado.nombres} ${postulanteAceptado.apellidos}`,
 
+      nombres:
+      postulanteAceptado.nombres,
+
+      apellidos:
+      postulanteAceptado.apellidos,
+
+
       dni:
       postulanteAceptado.dni || "",
+
+
+      correo:
+      postulanteAceptado.correo || "",
+
+
+      celular:
+      postulanteAceptado.celular || "",
+
+
+      fechaNacimiento:
+      postulanteAceptado.fechaNacimiento || "",
+
+
+      linkedin:
+      postulanteAceptado.linkedin || "",
+
+
+      github:
+      postulanteAceptado.github || "",
+
 
       actividad:
       postulanteAceptado.puesto,
 
+
+      puesto:
+      postulanteAceptado.puesto,
+
+
       area:
       postulanteAceptado.area,
 
+
+      experiencia:
+      postulanteAceptado.experiencia || "",
+
+
+      disponibilidad:
+      postulanteAceptado.disponibilidad || "",
+
+
+      origen:
+      "Portal de empleo",
+
+
       fechaIngreso:
-      new Date().toLocaleDateString(),
+      new Date().toISOString().split("T")[0],
+
+      fechaPostulacion:
+      convertirFecha(postulanteAceptado.fecha),
+
+      fecha:
+      convertirFecha(postulanteAceptado.fecha),
+
 
       estado:
       "Activo"
@@ -449,6 +516,13 @@ function mostrarPostulante(index){
                 <p class="modal-text text-slate-700">
 
                 <strong>DNI:</strong> ${p.dni || "No registrado"}
+
+                </p>
+
+                <p class="modal-text text-slate-700">
+
+                <strong>Fecha de nacimiento:</strong> 
+                ${p.fechaNacimiento || "No registrado"}
 
                 </p>
 
