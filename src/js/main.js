@@ -490,6 +490,8 @@ window.abrirModalEliminar = actions.abrirModalEliminar;
 window.cerrarModalEliminar = actions.cerrarModalEliminar;
 window.abrirModalEliminarActividad = actions.abrirModalEliminarActividad;
 window.cerrarModalEliminarActividad = actions.cerrarModalEliminarActividad;
+window.abrirConfirmacion = actions.abrirConfirmacion;
+window.cerrarConfirmacion = actions.cerrarConfirmacion;
 
 
 // ===================== FECHA INGRESO =====================

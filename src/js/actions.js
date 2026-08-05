@@ -1169,3 +1169,106 @@ export function guardarComentario(index, texto) {
   );
 
 }
+
+// ===================== MODAL CONFIRMACION =====================
+
+let accionConfirmada = null;
+
+
+export function abrirConfirmacion(titulo, mensaje, callback){
+
+    const modal =
+    document.getElementById("modal-confirmacion");
+
+
+    const tituloBox =
+    document.getElementById("titulo-confirmacion");
+
+
+    const mensajeBox =
+    document.getElementById("mensaje-confirmacion");
+
+
+    if(!modal) return;
+
+
+    tituloBox.innerText = titulo;
+
+    mensajeBox.innerText = mensaje;
+
+
+    accionConfirmada = callback;
+
+
+    modal.classList.remove("hidden");
+
+    modal.classList.add("flex");
+
+}
+
+
+
+const btnConfirmar =
+document.getElementById("btn-confirmar-accion");
+
+
+if(btnConfirmar){
+
+btnConfirmar.addEventListener(
+"click",
+()=>{
+
+
+    if(accionConfirmada){
+
+        accionConfirmada();
+
+    }
+
+
+    cerrarConfirmacion();
+
+
+});
+
+
+}
+
+
+
+const btnCancelar =
+document.getElementById("btn-cancelar-confirmacion");
+
+
+if(btnCancelar){
+
+btnCancelar.addEventListener(
+"click",
+()=>{
+
+    cerrarConfirmacion();
+
+});
+
+}
+
+
+
+export function cerrarConfirmacion(){
+
+const modal =
+document.getElementById("modal-confirmacion");
+
+
+if(!modal) return;
+
+
+modal.classList.add("hidden");
+
+modal.classList.remove("flex");
+
+
+accionConfirmada = null;
+
+
+}
