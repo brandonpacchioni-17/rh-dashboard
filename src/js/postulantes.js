@@ -342,6 +342,8 @@ botonesAceptar.forEach(btn => {
       fecha:
       convertirFecha(postulanteAceptado.fecha),
 
+      etapa:
+      "Postulante",
 
       estado:
       "Activo"
