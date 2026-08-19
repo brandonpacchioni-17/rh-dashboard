@@ -22,3 +22,8 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# Base de datos SQLite
+*.db
+*.db-shm
+*.db-wal

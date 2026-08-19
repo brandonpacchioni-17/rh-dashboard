@@ -308,7 +308,7 @@ const btnEnviar =
 if (btnEnviar) {
 
 
-btnEnviar.addEventListener("click", () => {
+btnEnviar.addEventListener("click", async () => {
 
 
     const terminos =
@@ -383,31 +383,74 @@ const nuevoPostulante = {
 
 };
 
-let postulantes =
-JSON.parse(
-localStorage.getItem("postulantes")
-)
-||
-[];
+try {
+
+    const respuesta = await fetch(
+        "http://localhost:3000/api/postulantes",
+        {
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+
+                ...nuevoPostulante,
+
+                cvNombre:
+                    nuevoPostulante.cv?.nombre || "",
+
+                cvArchivo:
+                    nuevoPostulante.cv?.archivo || ""
+
+            })
+        }
+    );
 
 
-postulantes.push(nuevoPostulante);
+    if (!respuesta.ok) {
+
+        throw new Error(
+            "No se pudo registrar la postulación"
+        );
+
+    }
 
 
-localStorage.setItem(
-"postulantes",
-JSON.stringify(postulantes)
-);
+    const resultado =
+        await respuesta.json();
 
 
-mostrarNotificacionPostulacion();
+    console.log(
+        "Postulación registrada:",
+        resultado
+    );
 
 
-setTimeout(() => {
+    mostrarNotificacionPostulacion();
 
-    window.location.href = "empleos";
 
-},4000);
+    setTimeout(() => {
+
+        window.location.href = "empleos";
+
+    }, 4000);
+
+
+} catch (error) {
+
+    console.error(
+        "Error al enviar postulación:",
+        error
+    );
+
+
+    alert(
+        "No se pudo enviar la postulación. Verifica la conexión con el servidor."
+    );
+
+}
 
 
 

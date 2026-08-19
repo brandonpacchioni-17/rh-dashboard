@@ -1,67 +1,218 @@
 // ===================== DATA =====================
 
-export let empleados = JSON.parse(localStorage.getItem("empleados")) || [
-  
- {
-  nombre: "Carlos Ramos",
-  actividad: "Capacitación",
-  area: "Marketing",
-  etapa: "Postulante",
-  fecha: "2026-05-28",
-  fechaIngreso: "",
-  historialEtapas: [],
-   // MÓDULO 2
-  actividadNombre: "",
-  fechaInicioActividad: "",
-  fechaFinActividad: ""
-},
+export let empleados = [];
 
-  {
-  nombre: "Ana Torres",
-  actividad: "Evaluación",
-  area: "Recursos Humanos",
-  etapa: "Contratado",
-  fecha: "2026-05-20",
-  fechaIngreso: "2026-06-01",
-  historialEtapas: [],
-   // MÓDULO 2
-  actividadNombre: "",
-  fechaInicioActividad: "",
-  fechaFinActividad: ""
-},
+const API_URL = "http://localhost:3000/api/empleados";
 
-  {
-  nombre: "Luis Medina",
-  actividad: "Entrevista",
-  area: "Finanzas",
-  etapa: "Entrevista presencial",
-  fecha: "2026-05-20",
-  fechaIngreso: "2026-06-01",
-  historialEtapas: [],
-   // MÓDULO 2
-  actividadNombre: "",
-  fechaInicioActividad: "",
-  fechaFinActividad: ""
-},
-];
 
-export function guardar() {
-  localStorage.setItem(
-    "empleados",
-    JSON.stringify(empleados)
-  );
+// ===================== CARGAR EMPLEADOS =====================
+
+export async function cargarEmpleados() {
+
+  try {
+
+    const respuesta = await fetch(API_URL);
+
+    if (!respuesta.ok) {
+      throw new Error(
+        `No se pudo obtener los empleados. HTTP ${respuesta.status}`
+      );
+    }
+
+    const datos = await respuesta.json();
+
+    empleados.splice(
+      0,
+      empleados.length,
+      ...datos
+    );
+
+    console.log(
+      "Empleados cargados desde SQLite:",
+      empleados
+    );
+
+    return empleados;
+
+  } catch (error) {
+
+    console.error(
+      "Error al conectar con el backend:",
+      error
+    );
+
+    empleados.splice(
+      0,
+      empleados.length
+    );
+
+    return [];
+
+  }
+
 }
 
-export function cargarEmpleados(){
 
-  empleados.splice(
-    0,
-    empleados.length,
-    ...(
-      JSON.parse(
-        localStorage.getItem("empleados")
-      ) || []
-    )
-  );
+// ===================== CREAR EMPLEADO =====================
 
+export async function guardarEmpleadoBackend(empleado) {
+
+  try {
+
+    const respuesta = await fetch(
+      API_URL,
+      {
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify(empleado)
+      }
+    );
+
+    const resultado =
+      await respuesta.json();
+
+    if (!respuesta.ok) {
+
+      throw new Error(
+        resultado.error ||
+        "No se pudo guardar el empleado"
+      );
+
+    }
+
+    console.log(
+      "Empleado guardado en SQLite:",
+      resultado
+    );
+
+    return resultado;
+
+  } catch (error) {
+
+    console.error(
+      "Error al guardar empleado:",
+      error
+    );
+
+    return null;
+
+  }
+
+}
+
+
+// ===================== ACTUALIZAR EMPLEADO =====================
+
+export async function actualizarEmpleadoBackend(
+  id,
+  empleado
+) {
+
+  try {
+
+    const respuesta = await fetch(
+      `${API_URL}/${id}`,
+      {
+        method: "PUT",
+
+        headers: {
+          "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify(empleado)
+      }
+    );
+
+    const resultado =
+      await respuesta.json();
+
+    if (!respuesta.ok) {
+
+      throw new Error(
+        resultado.error ||
+        "No se pudo actualizar el empleado"
+      );
+
+    }
+
+    console.log(
+      "Empleado actualizado en SQLite:",
+      resultado
+    );
+
+    return resultado;
+
+  } catch (error) {
+
+    console.error(
+      "Error al actualizar empleado:",
+      error
+    );
+
+    return null;
+
+  }
+
+}
+
+
+// ===================== ELIMINAR EMPLEADO =====================
+
+export async function eliminarEmpleadoBackend(id) {
+
+  try {
+
+    const respuesta = await fetch(
+      `${API_URL}/${id}`,
+      {
+        method: "DELETE"
+      }
+    );
+
+    const resultado =
+      await respuesta.json();
+
+    if (!respuesta.ok) {
+
+      throw new Error(
+        resultado.error ||
+        "No se pudo eliminar el empleado"
+      );
+
+    }
+
+    console.log(
+      "Empleado eliminado de SQLite:",
+      resultado
+    );
+
+    return resultado;
+
+  } catch (error) {
+
+    console.error(
+      "Error al eliminar empleado:",
+      error
+    );
+
+    return null;
+
+  }
+
+}
+
+
+// ===================== COMPATIBILIDAD =====================
+
+
+export function guardarLocal() {
+  return true;
+}
+
+export function guardar() {
+  return true;
 }

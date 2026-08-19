@@ -3,7 +3,7 @@ import { historial } from "./historial.js";
 import { obtenerRol } from "./auth.js";
 import { getFiltro, getBusqueda } from "./filters.js";
 import { areas } from "./areas.js";
-import { actividades } from "./actividades.js";
+import { actividades, cargarActividades } from "./actividades.js";
 
 // ===================== ÁREAS =====================
 
@@ -60,10 +60,11 @@ const tbody = document.getElementById("tabla-body");
 
 // ===================== RENDER =====================
 
-export function render() {
+export async function render() {
 
-  cargarEmpleados();
-
+  await cargarEmpleados();
+  await cargarActividades();
+  
   const rol = obtenerRol();
 
   let data = empleados;

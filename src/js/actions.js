@@ -1,4 +1,4 @@
-import { empleados, guardar } from "./data.js";
+import { empleados, guardar, guardarEmpleadoBackend, actualizarEmpleadoBackend, eliminarEmpleadoBackend, cargarEmpleados } from "./data.js";
 import { obtenerRol } from "./auth.js";
 import { render } from "./ui.js";
 import { areas, guardarAreas } from "./areas.js";
@@ -118,9 +118,107 @@ export function cerrarModal() {
   editIndex = null;
 }
 
+async function agregarActividadBackend(datos) {
+
+  try {
+
+    const respuesta =
+      await fetch(
+        "http://localhost:3000/api/actividades",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type": "application/json"
+          },
+
+          body: JSON.stringify(datos)
+        }
+      );
+
+    const resultado =
+      await respuesta.json();
+
+    if (!respuesta.ok) {
+
+      throw new Error(
+        resultado.error ||
+        "No se pudo crear la actividad"
+      );
+
+    }
+
+    return resultado;
+
+  } catch (error) {
+
+    console.error(
+      "Error al guardar actividad:",
+      error
+    );
+
+    return null;
+
+  }
+
+}
+
+// ===================== HISTORIAL DE ETAPAS =====================
+
+async function agregarHistorialBackend(empleadoId, etapa) {
+
+  try {
+
+    const respuesta = await fetch(
+      `http://localhost:3000/api/empleados/${empleadoId}/historial`,
+      {
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+          etapa
+        })
+      }
+    );
+
+    const resultado =
+      await respuesta.json();
+
+    if (!respuesta.ok) {
+
+      throw new Error(
+        resultado.error ||
+        "No se pudo guardar el historial"
+      );
+
+    }
+
+    console.log(
+      "Historial guardado en SQLite:",
+      resultado
+    );
+
+    return resultado;
+
+  } catch (error) {
+
+    console.error(
+      "Error al guardar historial:",
+      error
+    );
+
+    return null;
+
+  }
+
+}
+
 // ===================== CRUD =====================
 
-export function guardarEmpleado() {
+export async function guardarEmpleado() {
 
 
   const fecha = document.getElementById("fechaPostulacion").value;
@@ -134,7 +232,7 @@ export function guardarEmpleado() {
 
   let fechaIngresoFinal = fechaIngreso;
 
-// SI ES CONTRATADO Y NO HAY FECHA
+
 if (
   etapa === "Contratado" &&
   !fechaIngresoFinal
@@ -144,7 +242,7 @@ if (
     new Date().toISOString().split("T")[0];
 }
 
-// SI NO ES CONTRATADO
+
 if (etapa !== "Contratado") {
 
   fechaIngresoFinal = "";
@@ -165,7 +263,7 @@ if (etapa !== "Contratado") {
 
 
 
-  // reset errores
+
   errorFecha.classList.add("hidden");
   errorNombre.classList.add("hidden");
   errorActividad.classList.add("hidden");
@@ -261,46 +359,78 @@ botonGuardar.classList.add("opacity-70");
   }
 
 
-  // ================= GUARDAR =================
-  if (editIndex === null) {
+// ===================== GUARDAR =====================
 
-  empleados.push({
-    nombre,
-    dni,
-    actividad,
-    area: areaFinal,
-    etapa,
-    fecha,
-    fechaIngreso: fechaIngresoFinal,
-    comentario: "",
-    observaciones: [],
+const empleadoData = {
+  nombre,
+  dni,
+  actividad,
+  area: areaFinal,
+  etapa,
+  fecha,
+  fechaIngreso: fechaIngresoFinal,
+  comentario: ""
+};
 
-    historialEtapas: [
-      {
-        etapa,
-        fechaCambio: new Date().toLocaleString()
-      }
-    ]
-  });
+if (editIndex === null) {
+
+  const resultado =
+    await guardarEmpleadoBackend(empleadoData);
+
+  if (!resultado) {
+
+    botonGuardar.disabled = false;
+    botonGuardar.innerText = "Guardar";
+    botonGuardar.classList.remove("opacity-70");
+
+    notificar(
+      "No se pudo conectar con el servidor",
+      "error"
+    );
+
+    return;
+  }
+
+await cargarEmpleados();
+const empleadoCreado =
+  empleados.find(e =>
+    e.nombre === nombre &&
+    e.dni === dni
+  );
+
+if (empleadoCreado?.id) {
+
+  await agregarHistorialBackend(
+    empleadoCreado.id,
+    etapa
+  );
+
+}
 
 } else {
 
-  const etapaAnterior =
-    empleados[editIndex].etapa;
+  const empleadoActual =
+    empleados[editIndex];
 
-  const historialEtapas =
-    empleados[editIndex].historialEtapas || [];
+  if (!empleadoActual?.id) {
 
-  if (etapaAnterior !== etapa) {
+    notificar(
+      "El empleado no tiene un ID válido",
+      "error"
+    );
 
-    historialEtapas.push({
-      etapa,
-      fechaCambio: new Date().toLocaleString()
-    });
+    botonGuardar.disabled = false;
+    botonGuardar.innerText = "Guardar";
+    botonGuardar.classList.remove("opacity-70");
 
+    return;
   }
 
-  empleados[editIndex] = {
+  const etapaAnterior =
+  empleadoActual.etapa;
+
+  const empleadoActualizado = {
+
     nombre,
     dni,
     actividad,
@@ -309,18 +439,52 @@ botonGuardar.classList.add("opacity-70");
     fecha,
     fechaIngreso: fechaIngresoFinal,
     comentario:
-      empleados[editIndex].comentario || "",
-    observaciones:
-      empleados[editIndex].observaciones || [],
-    historialEtapas
+      empleadoActual.comentario || ""
   };
+
+  
+
+  const resultado =
+    await actualizarEmpleadoBackend(
+      empleadoActual.id,
+      empleadoActualizado
+    );
+
+  if (!resultado) {
+
+    botonGuardar.disabled = false;
+    botonGuardar.innerText = "Guardar";
+    botonGuardar.classList.remove("opacity-70");
+
+    notificar(
+      "No se pudo actualizar el empleado",
+      "error"
+    );
+
+    return;
+  }
+
+  console.log(
+    "Empleado actualizado correctamente:",
+    resultado
+  );
+
+  if (etapaAnterior !== etapa) {
+
+  await agregarHistorialBackend(
+    empleadoActual.id,
+    etapa
+  );
+
+}
 }
 
-  const esEdicion = editIndex !== null;
+ const esEdicion = editIndex !== null;
 
-  setTimeout(() => {
-    
-    if (etapa === "Contratado") {
+
+// ===================== ACTIVIDAD AUTOMÁTICA =====================
+
+if (etapa === "Contratado") {
 
   const existeActividad =
     actividades.some(
@@ -330,11 +494,12 @@ botonGuardar.classList.add("opacity-70");
 
   if (!existeActividad) {
 
-    console.log("AGREGANDO ACTIVIDAD", nombre);
+    console.log(
+      "AGREGANDO ACTIVIDAD",
+      nombre
+    );
 
-    actividades.push({
-
-      id: Date.now(),
+    const nuevaActividad = {
 
       nombre,
 
@@ -354,43 +519,62 @@ botonGuardar.classList.add("opacity-70");
 
       estadoEmpleado: "Activo"
 
-    });
+    };
 
-    guardarActividades();
-    console.log(actividades);
+    const resultado =
+      await agregarActividadBackend(
+        nuevaActividad
+      );
+
+    if (!resultado) {
+
+      console.error(
+        "No se pudo guardar la actividad en el backend"
+      );
+
+    } else {
+
+      console.log(
+        "Actividad creada en backend:",
+        resultado
+      );
+
+    }
+
   }
+
 }
 
-  guardar();
 
-  agregarHistorial(
-    esEdicion
-      ? `Empleado editado: ${nombre}`
-      : `Empleado agregado: ${nombre}`
-  );
+// ===================== FINALIZAR =====================
 
-  render();
-  cerrarModal();
+guardar();
 
-  botonGuardar.disabled = false;
-  botonGuardar.innerText = "Guardar";
-  botonGuardar.classList.remove("opacity-70");
+agregarHistorial(
+  esEdicion
+    ? `Empleado editado: ${nombre}`
+    : `Empleado agregado: ${nombre}`
+);
 
-  
+render();
 
-  notificar(
+cerrarModal();
+
+botonGuardar.disabled = false;
+botonGuardar.innerText = "Guardar";
+botonGuardar.classList.remove("opacity-70");
+
+notificar(
   esEdicion
     ? "Empleado actualizado"
     : "Empleado agregado correctamente",
   "success"
-  );
-
-
-
-}, 700);
+);
 
 return;
 }
+
+
 let indexEliminar = null;
 
 let indexActividadEliminar = null;
@@ -431,23 +615,62 @@ export function cerrarModalEliminar() {
 
   indexEliminar = null;
 }
-export function eliminarEmpleado() {
+export async function eliminarEmpleado() {
 
   if (indexEliminar === null) return;
 
-  const eliminado = empleados[indexEliminar];
+  const empleado =
+    empleados[indexEliminar];
 
-empleados.splice(indexEliminar, 1);
+  if (!empleado) {
 
-guardar();
+    cerrarModalEliminar();
 
-agregarHistorial(`Empleado eliminado: ${eliminado?.nombre || "desconocido"}`);
+    return;
+  }
 
-render();
-cerrarModalEliminar();
+  if (!empleado.id) {
 
+    notificar(
+      "El empleado no tiene un ID válido",
+      "error"
+    );
 
-notificar("Empleado eliminado", "error");
+    return;
+  }
+
+  const nombre =
+    empleado.nombre;
+
+  const resultado =
+    await eliminarEmpleadoBackend(
+      empleado.id
+    );
+
+  if (!resultado) {
+
+    notificar(
+      "No se pudo eliminar el empleado",
+      "error"
+    );
+
+    return;
+  }
+
+  await cargarEmpleados();
+
+  agregarHistorial(
+    `Empleado eliminado: ${nombre}`
+  );
+
+  cerrarModalEliminar();
+
+  await render();
+
+  notificar(
+    "Empleado eliminado correctamente",
+    "success"
+  );
 
 }
 
@@ -931,7 +1154,7 @@ export function eliminarArea() {
 
 // ===================== REGISTRO AUTOMÁTICO =====================
 
-export function registroAutomatico() {
+export async function registroAutomatico() {
 
   const rol = obtenerRol();
 
@@ -983,8 +1206,6 @@ export function registroAutomatico() {
 
   const nuevoEmpleado = {
 
-    id: Date.now(),
-
     nombre: nombreCompleto,
 
     dni,
@@ -995,14 +1216,30 @@ export function registroAutomatico() {
 
     etapa: "Postulante",
 
-    fechaIngreso,
+    fecha,
 
-    fecha
+    fechaIngreso: "",
+
+    comentario: ""
+
   };
 
-  empleados.push(nuevoEmpleado);
+  const resultado =
+    await guardarEmpleadoBackend(
+      nuevoEmpleado
+    );
 
-  guardar();
+  if (!resultado) {
+
+    notificar(
+      "No se pudo registrar el empleado en el servidor",
+      "error"
+    );
+
+    return;
+  }
+
+  await cargarEmpleados();
 
   // LIMPIAR CAMPOS
 
@@ -1042,41 +1279,97 @@ export function actualizarActividad(index, valor) {
 
 }
 
-export function actualizarFechaInicio(index, valor) {
+export async function actualizarFechaInicio(index, valor) {
 
-  actividades[index].fechaInicio = valor;
+  const actividad = actividades[index];
 
-  guardarActividades();
+  actividad.fechaInicio = valor;
 
-  renderActividades();
-
-}
-
-export function actualizarFechaFin(index, valor) {
-
-  actividades[index].fechaFin = valor;
-
-  guardarActividades();
+  await actualizarActividadBackend(actividad);
 
   renderActividades();
 
 }
 
-export function actualizarEstado(index, valor) {
+async function actualizarActividadBackend(actividad) {
 
-  actividades[index].estado = valor;
+  try {
 
-  guardarActividades();
+    const respuesta = await fetch(
+      `http://localhost:3000/api/actividades/${actividad.id}`,
+      {
+        method: "PUT",
+
+        headers: {
+          "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify(actividad)
+      }
+    );
+
+    const resultado = await respuesta.json();
+
+    if (!respuesta.ok) {
+
+      throw new Error(
+        resultado.error ||
+        "No se pudo actualizar la actividad"
+      );
+
+    }
+
+    console.log(
+      "Actividad actualizada en SQLite:",
+      resultado
+    );
+
+    return true;
+
+  } catch (error) {
+
+    console.error(
+      "Error al actualizar actividad:",
+      error
+    );
+
+    return false;
+
+  }
+
+}
+
+export async function actualizarFechaFin(index, valor) {
+
+  const actividad = actividades[index];
+
+  actividad.fechaFin = valor;
+
+  await actualizarActividadBackend(actividad);
 
   renderActividades();
 
 }
 
-export function actualizarEstadoEmpleado(index, valor) {
+export async function actualizarEstado(index, valor) {
 
-  actividades[index].estadoEmpleado = valor;
+  const actividad = actividades[index];
 
-  guardarActividades();
+  actividad.estado = valor;
+
+  await actualizarActividadBackend(actividad);
+
+  renderActividades();
+
+}
+
+export async function actualizarEstadoEmpleado(index, valor) {
+
+  const actividad = actividades[index];
+
+  actividad.estadoEmpleado = valor;
+
+  await actualizarActividadBackend(actividad);
 
   renderActividades();
 

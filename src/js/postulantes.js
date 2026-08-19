@@ -2,10 +2,44 @@
 
 import { notificar } from "./actions.js";
 
-export let postulantes =
-  JSON.parse(
-    localStorage.getItem("postulantes")
-  ) || [];
+export let postulantes = [];
+
+
+// ===================== CARGAR DESDE BACKEND =====================
+
+export async function cargarPostulantesBackend() {
+
+  try {
+
+    const respuesta = await fetch(
+      "http://localhost:3000/api/postulantes"
+    );
+
+    if (!respuesta.ok) {
+      throw new Error("No se pudieron cargar los postulantes");
+    }
+
+    postulantes = await respuesta.json();
+
+    console.log(
+      "Postulantes cargados desde el backend:",
+      postulantes
+    );
+
+    return postulantes;
+
+  } catch (error) {
+
+    console.error(
+      "Error al cargar postulantes:",
+      error
+    );
+
+    return [];
+
+  }
+
+}
 
 
 // ===================== GUARDAR =====================
@@ -105,14 +139,9 @@ export function actualizarCardsPostulantes() {
 
 }
 
-export function renderPostulantes(){
+export async function renderPostulantes(){
 
-  postulantes =
-JSON.parse(
-    localStorage.getItem("postulantes")
-) || [];
-
-  limpiarRechazados();
+  await cargarPostulantesBackend();
 
   actualizarCardsPostulantes();
 
@@ -254,123 +283,69 @@ botonesVer.forEach(btn => {
 
 botonesAceptar.forEach(btn => {
 
-  btn.addEventListener("click", () => {
+  btn.addEventListener("click", async () => {
 
     const index = btn.dataset.index;
 
-    const postulanteAceptado = postulantes[index];
+    const postulanteAceptado =
+      postulantes[index];
 
+    try {
 
-    postulanteAceptado.estado = "Aceptado";
+      const respuesta = await fetch(
+        `http://localhost:3000/api/postulantes/${postulanteAceptado.id}/aceptar`,
+        {
+          method: "PUT"
+        }
+      );
 
-    postulanteAceptado.fechaAceptacion = Date.now();
+      const resultado =
+        await respuesta.json();
 
+      if (!respuesta.ok) {
 
-    // guardar como empleado
-    const empleados =
-    JSON.parse(localStorage.getItem("empleados")) || [];
+        throw new Error(
+          resultado.error ||
+          "No se pudo aceptar el postulante"
+        );
 
+      }
 
-    empleados.push({
+      console.log(
+        "Postulante aceptado:",
+        resultado
+      );
 
-      id: Date.now(),
+      postulanteAceptado.estado =
+        "Aceptado";
 
-      nombre:
-      `${postulanteAceptado.nombres} ${postulanteAceptado.apellidos}`,
+      postulanteAceptado.fechaAceptacion =
+        Date.now();
 
-      nombres:
-      postulanteAceptado.nombres,
+      renderPostulantes();
 
-      apellidos:
-      postulanteAceptado.apellidos,
+      window.dispatchEvent(
+        new CustomEvent("empleado-agregado")
+      );
 
+      notificar(
+        "Postulante aceptado correctamente. Fue enviado a Gestión",
+        "success"
+      );
 
-      dni:
-      postulanteAceptado.dni || "",
+    } catch (error) {
 
+      console.error(
+        "Error al aceptar postulante:",
+        error
+      );
 
-      correo:
-      postulanteAceptado.correo || "",
+      notificar(
+        "No se pudo aceptar el postulante",
+        "error"
+      );
 
-
-      celular:
-      postulanteAceptado.celular || "",
-
-
-      fechaNacimiento:
-      postulanteAceptado.fechaNacimiento || "",
-
-
-      linkedin:
-      postulanteAceptado.linkedin || "",
-
-
-      github:
-      postulanteAceptado.github || "",
-
-
-      actividad:
-      postulanteAceptado.puesto,
-
-
-      puesto:
-      postulanteAceptado.puesto,
-
-
-      area:
-      postulanteAceptado.area,
-
-
-      experiencia:
-      postulanteAceptado.experiencia || "",
-
-
-      disponibilidad:
-      postulanteAceptado.disponibilidad || "",
-
-
-      origen:
-      "Portal de empleo",
-
-
-      fechaIngreso:
-      new Date().toISOString().split("T")[0],
-
-      fechaPostulacion:
-      convertirFecha(postulanteAceptado.fecha),
-
-      fecha:
-      convertirFecha(postulanteAceptado.fecha),
-
-      etapa:
-      "Postulante",
-
-      estado:
-      "Activo"
-
-    });
-
-
-    localStorage.setItem(
-      "empleados",
-      JSON.stringify(empleados)
-    );
-    
-    guardarPostulantes();
-
-
-    renderPostulantes();
-
-    window.dispatchEvent(
-    new CustomEvent("empleado-agregado")
-);
-
-
-  notificar(
-    "Postulante aceptado correctamente. Fue enviado a Gestión",
-    "success"
-  );
-
+    }
 
   });
 
@@ -378,63 +353,134 @@ botonesAceptar.forEach(btn => {
 
 botonesDeshacer.forEach(btn => {
 
-    btn.addEventListener("click", () => {
+  btn.addEventListener("click", async () => {
 
-        const index = btn.dataset.index;
+    const index = btn.dataset.index;
 
-        const postulante = postulantes[index];
+    const postulante =
+      postulantes[index];
 
-        // quitar estado de contratado
-        postulante.estado = "En evaluación";
+    try {
 
-        delete postulante.fechaAceptacion;
+      const respuesta = await fetch(
+        `http://localhost:3000/api/postulantes/${postulante.id}/deshacer`,
+        {
+          method: "PUT"
+        }
+      );
 
-        // eliminar de empleados
-        const empleados =
-        JSON.parse(localStorage.getItem("empleados")) || [];
+      const resultado =
+        await respuesta.json();
 
-        const nuevosEmpleados =
-        empleados.filter(e =>
-            e.nombre !== `${postulante.nombres} ${postulante.apellidos}`
+      if (!respuesta.ok) {
+
+        throw new Error(
+          resultado.error ||
+          "No se pudo revertir la contratación"
         );
 
-        localStorage.setItem(
-            "empleados",
-            JSON.stringify(nuevosEmpleados)
-        );
+      }
 
-        window.dispatchEvent(
-            new CustomEvent("empleado-agregado")
-        );
+      console.log(
+        "Contratación revertida:",
+        resultado
+      );
 
-        guardarPostulantes();
+      postulante.estado =
+        "En evaluación";
 
-        renderPostulantes();
+      delete postulante.fechaAceptacion;
 
-        notificar(
-            "La contratación fue revertida correctamente",
-            "warning"
-        );
+      renderPostulantes();
 
-    });
+      window.dispatchEvent(
+        new CustomEvent("empleado-agregado")
+      );
+
+      notificar(
+        "La contratación fue revertida correctamente",
+        "warning"
+      );
+
+    } catch (error) {
+
+      console.error(
+        "Error al revertir contratación:",
+        error
+      );
+
+      notificar(
+        "No se pudo revertir la contratación",
+        "error"
+      );
+
+    }
+
+  });
 
 });
 
 botonesRechazar.forEach(btn => {
 
-  btn.addEventListener("click", () => {
+  btn.addEventListener("click", async () => {
 
     const index = btn.dataset.index;
 
-    postulantes[index].estado = "Rechazado";
+    const postulante =
+      postulantes[index];
 
-    postulantes[index].fechaRechazo =
-    Date.now();
+    try {
 
+      const respuesta = await fetch(
+        `http://localhost:3000/api/postulantes/${postulante.id}/rechazar`,
+        {
+          method: "PUT"
+        }
+      );
 
-    guardarPostulantes();
+      const resultado =
+        await respuesta.json();
 
-    renderPostulantes();
+      if (!respuesta.ok) {
+
+        throw new Error(
+          resultado.error ||
+          "No se pudo rechazar el postulante"
+        );
+
+      }
+
+      console.log(
+        "Postulante rechazado:",
+        resultado
+      );
+
+      postulante.estado =
+        "Rechazado";
+
+      postulante.fechaRechazo =
+        Date.now();
+
+      renderPostulantes();
+
+      notificar(
+        "Postulante rechazado correctamente",
+        "warning"
+      );
+
+    } catch (error) {
+
+      console.error(
+        "Error al rechazar postulante:",
+        error
+      );
+
+      notificar(
+        "No se pudo rechazar el postulante",
+        "error"
+      );
+
+    }
 
   });
 
@@ -634,35 +680,45 @@ function mostrarPostulante(index){
 
         <div class="modal-card bg-slate-50 rounded-xl p-5 transition-all">
 
-          <h3 class="modal-title text-lg font-bold mb-4 text-slate-800">
-            Currículum
-          </h3>
+            <h3 class="modal-title text-lg font-bold mb-4 text-slate-800">
+                Currículum
+            </h3>
 
-          <div class="flex items-center justify-between">
+            <div class="flex items-center justify-between">
 
-              <div>
+                <div>
 
-                  <p class="modal-title font-semibold text-slate-800">
-                      ${p.cv.nombre}
-                  </p>
+                    <p class="modal-title font-semibold text-slate-800">
+                        ${p.cvNombre || "No se adjuntó CV"}
+                    </p>
 
-                  <p class="text-sm text-slate-500 dark:text-slate-400">
-                      Archivo adjunto
-                  </p>
+                    <p class="text-sm text-slate-500 dark:text-slate-400">
+                        ${p.cvNombre ? "Archivo adjunto" : "Sin archivo disponible"}
+                    </p>
 
-              </div>
+                </div>
 
-              <button
-                  id="btn-ver-cv"
-                  class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-xl">
+                ${
+                    p.cvArchivo
+                    ? `
+                    <button
+                        id="btn-ver-cv"
+                        class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-xl">
 
-                  Ver CV
+                        Ver CV
 
-              </button>
+                    </button>
+                    `
+                    : `
+                    <span class="text-slate-400">
+                        No disponible
+                    </span>
+                    `
+                }
 
-          </div>
+            </div>
 
-      </div>
+        </div>
 
     </div>
 
@@ -797,52 +853,44 @@ modalSubtexts.forEach(text => {
     modal.classList.add("flex");
 
 const btnVerCV =
-document.getElementById("btn-ver-cv");
+  document.getElementById("btn-ver-cv");
 
+  
 
-if(btnVerCV){
+if (btnVerCV) {
 
-    btnVerCV.addEventListener("click",()=>{
+  btnVerCV.addEventListener("click", () => {
 
+    const ventana =
+      window.open("", "_blank");
 
-        const ventana =
-        window.open(
-          "",
-          "_blank"
-        );
+    if (!ventana) return;
 
+    ventana.document.title =
+      p.cvNombre || "Currículum";
 
-        ventana.document.title =
-        p.cv.nombre;
+    ventana.document.body.style.margin = "0";
 
+    const iframe =
+      ventana.document.createElement("iframe");
 
-        ventana.document.body.style.margin = "0";
+    iframe.src =
+      p.cvArchivo;
 
+    iframe.style.width =
+      "100%";
 
-        const iframe =
-        ventana.document.createElement("iframe");
+    iframe.style.height =
+      "100vh";
 
+    iframe.style.border =
+      "none";
 
-        iframe.src =
-        p.cv.archivo;
+    ventana.document.body.appendChild(
+      iframe
+    );
 
-
-        iframe.style.width =
-        "100%";
-
-        iframe.style.height =
-        "100vh";
-
-        iframe.style.border =
-        "none";
-
-
-        ventana.document.body.appendChild(
-          iframe
-        );
-
-
-    });
+  });
 
 }
 

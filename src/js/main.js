@@ -1,14 +1,51 @@
 import { render } from "./ui.js";
-import { login,logout,haySesion,obtenerUsuario } from "./auth.js";
-import { setFiltro, setBusqueda } from "./filters.js";
+
+import {
+  login,
+  logout,
+  haySesion,
+  obtenerUsuario
+} from "./auth.js";
+
+import {
+  setFiltro,
+  setBusqueda
+} from "./filters.js";
+
 import * as actions from "./actions.js";
-import { registroAutomatico } from "./actions.js";
+
+import {
+  cargarActividades,
+  eliminarActividad,
+  actualizarActividad,
+  actualizarFechaInicio,
+  actualizarFechaFin,
+  actualizarEstado,
+  actualizarEstadoEmpleado
+} from "./actividades.js";
+
 import { validarDuplicadoTiempoReal } from "./actions.js";
+
+import { registroAutomatico } from "./actions.js";
+
 import { cargarAreas } from "./ui.js";
+
 import { areas } from "./areas.js";
+
 import { limpiarHistorial } from "./historial.js";
-import { abrirPerfil, cerrarPerfil, agregarObservacion } from "./perfil.js";
-import {  postulantes,  guardarPostulantes,  renderPostulantes} from "./postulantes.js";
+
+import {
+  abrirPerfil,
+  cerrarPerfil,
+  agregarObservacion
+} from "./perfil.js";
+
+import {
+  postulantes,
+  guardarPostulantes,
+  renderPostulantes
+} from "./postulantes.js";
+
 import "./postulacion.js";
 
 
@@ -350,7 +387,8 @@ if (historial) {
 }
 
 
-// actividades
+// ===================== ACTIVIDADES =====================
+
 if (seccionActiva === "actividades") {
 
   if (actividades) {
@@ -367,6 +405,13 @@ if (seccionActiva === "actividades") {
     "pl-3",
     "rounded-lg"
   );
+
+  cargarActividades().then(() => {
+
+    render();
+
+  });
+
 }
 }
 
@@ -477,6 +522,11 @@ window.agregarObservacion = agregarObservacion;
 window.abrirPerfil = abrirPerfil;
 window.cerrarPerfil = cerrarPerfil;
 window.registroAutomatico = registroAutomatico;
+window.actualizarActividad =  actualizarActividad;
+window.actualizarFechaInicio =  actualizarFechaInicio;
+window.actualizarFechaFin =  actualizarFechaFin;
+window.actualizarEstado =  actualizarEstado;
+window.actualizarEstadoEmpleado =  actualizarEstadoEmpleado;
 window.guardarEmpleado = actions.guardarEmpleado;
 window.eliminarEmpleado = actions.eliminarEmpleado;
 window.exportarCSV = actions.exportarCSV;
@@ -492,7 +542,12 @@ window.abrirModalEliminarActividad = actions.abrirModalEliminarActividad;
 window.cerrarModalEliminarActividad = actions.cerrarModalEliminarActividad;
 window.abrirConfirmacion = actions.abrirConfirmacion;
 window.cerrarConfirmacion = actions.cerrarConfirmacion;
-
+window.actualizarActividad = actualizarActividad;
+window.actualizarFechaInicio = actualizarFechaInicio;
+window.actualizarFechaFin = actualizarFechaFin;
+window.actualizarEstado = actualizarEstado;
+window.actualizarEstadoEmpleado = actualizarEstadoEmpleado;
+window.eliminarActividad = eliminarActividad;
 
 // ===================== FECHA INGRESO =====================
 
@@ -573,8 +628,12 @@ titulosModal.forEach(t=>{
 
 if (document.getElementById("container")) {
 
-  render();
-  actualizarVista();
+  cargarActividades().then(() => {
+
+    render();
+    actualizarVista();
+
+  });
 
 }
 
