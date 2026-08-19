@@ -53,8 +53,6 @@ export function cargarAreas() {
 
   });
 }
-// ===================== DOM =====================
-const tbody = document.getElementById("tabla-body");
 
 
 
@@ -62,14 +60,21 @@ const tbody = document.getElementById("tabla-body");
 
 export async function render() {
 
+  const tbody = document.getElementById("tabla-body");
+
+  if (!tbody) {
+    return;
+  }
+
   await cargarEmpleados();
   await cargarActividades();
-  
+
   const rol = obtenerRol();
 
   let data = empleados;
 
   const filtro = getFiltro();
+
   const textoBusqueda = getBusqueda();
 
   if (filtro !== "todos") {
@@ -77,23 +82,19 @@ export async function render() {
     data = empleados.filter(e =>
       e.etapa === filtro
     );
-
   }
 
   if (textoBusqueda.trim() !== "") {
 
     const texto = textoBusqueda.toLowerCase();
 
-      data = data.filter(e =>
-
+    data = data.filter(e =>
       e.nombre.toLowerCase().includes(texto) ||
       e.actividad.toLowerCase().includes(texto) ||
       e.area.toLowerCase().includes(texto) ||
       e.etapa.toLowerCase().includes(texto)
-
     );
   }
-
 
 
 // ===================== PERMISOS =====================
