@@ -77,20 +77,6 @@ db.exec(`
   );
 `);
 
-// ===================== HISTORIAL DE ETAPAS =====================
-
-db.exec(`
-  CREATE TABLE IF NOT EXISTS historial_etapas (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    empleadoId INTEGER NOT NULL,
-    etapa TEXT NOT NULL,
-    fechaCambio TEXT NOT NULL,
-    FOREIGN KEY (empleadoId)
-      REFERENCES empleados(id)
-      ON DELETE CASCADE
-  );
-`);
-
 // ===================== OBSERVACIONES =====================
 
 db.exec(`
@@ -102,6 +88,16 @@ db.exec(`
     FOREIGN KEY (empleado_id)
       REFERENCES empleados(id)
       ON DELETE CASCADE
+  );
+`);
+
+// ===================== HISTORIAL GENERAL =====================
+
+db.exec(`
+  CREATE TABLE IF NOT EXISTS historial (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    mensaje TEXT NOT NULL,
+    fecha TEXT NOT NULL
   );
 `);
 

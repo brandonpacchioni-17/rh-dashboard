@@ -1,60 +1,62 @@
-// ===================== USUARIOS =====================
-
-const usuarios = [
-
-  {
-    usuario: "admin",
-    password: "Mej&corp%111$2026",
-    rol: "admin"
-  },
-
-  {
-    usuario: "rrhh",
-    password: "Mej&corp%111$2026",
-    rol: "rrhh"
-  },
-
-  {
-    usuario: "supervisor",
-    password: "Mej&corp%111$2026",
-    rol: "supervisor"
-  }
-
-];
-
 // ===================== LOGIN =====================
 
-export function login(usuario, password, rol) {
+export async function login(usuario, password, rol) {
 
-  const encontrado = usuarios.find(
-  u =>
-    u.usuario === usuario &&
-    u.password === password &&
-    u.rol === rol
-);
+  try {
 
-  if (!encontrado) {
+    const respuesta = await fetch(
+      "http://localhost:3000/api/login",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          usuario,
+          password,
+          rol
+        })
+      }
+    );
+
+    const resultado = await respuesta.json();
+
+    if (!respuesta.ok) {
+
+      return {
+        success: false,
+        mensaje: resultado.error || "Credenciales incorrectas"
+      };
+
+    }
+
+    localStorage.setItem(
+      "sesion",
+      JSON.stringify(resultado.usuario)
+    );
+
+    localStorage.setItem(
+      "usuarioActivo",
+      JSON.stringify(resultado.usuario)
+    );
+
+    return {
+      success: true
+    };
+
+  } catch (error) {
+
+    console.error("Error de conexión con el backend:", error);
+
     return {
       success: false,
-      mensaje: "Credenciales incorrectas"
+      mensaje: "No se pudo conectar con el servidor"
     };
+
   }
 
-  
-    localStorage.setItem(
-    "sesion",
-    JSON.stringify(encontrado)
-);
-
-  localStorage.setItem(
-    "usuarioActivo",
-    JSON.stringify(encontrado)
-  );
-
-  return {
-    success: true
-  };
 }
+
 
 // ===================== LOGOUT =====================
 
@@ -65,7 +67,9 @@ export function logout() {
   localStorage.removeItem("usuarioActivo");
 
   location.reload();
+
 }
+
 
 // ===================== VALIDAR SESIÓN =====================
 
@@ -74,6 +78,7 @@ export function haySesion() {
   return localStorage.getItem("sesion") !== null;
 
 }
+
 
 // ===================== OBTENER USUARIO =====================
 
@@ -85,6 +90,7 @@ export function obtenerUsuario() {
 
 }
 
+
 // ===================== OBTENER ROL =====================
 
 export function obtenerRol() {
@@ -93,4 +99,5 @@ export function obtenerRol() {
     JSON.parse(localStorage.getItem("sesion"));
 
   return usuario?.rol || null;
+
 }

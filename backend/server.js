@@ -21,6 +21,66 @@ app.get("/", (req, res) => {
   });
 });
 
+// ===================== AUTENTICACIÓN =====================
+
+app.post("/api/login", (req, res) => {
+
+  const {
+    usuario,
+    password,
+    rol
+  } = req.body;
+
+  const usuarios = {
+
+    admin: {
+      usuario: process.env.ADMIN_USUARIO,
+      password: process.env.ADMIN_PASSWORD,
+      rol: "admin"
+    },
+
+    rrhh: {
+      usuario: process.env.RRHH_USUARIO,
+      password: process.env.RRHH_PASSWORD,
+      rol: "rrhh"
+    },
+
+    supervisor: {
+      usuario: process.env.SUPERVISOR_USUARIO,
+      password: process.env.SUPERVISOR_PASSWORD,
+      rol: "supervisor"
+    }
+
+  };
+
+  const usuarioConfigurado =
+    usuarios[rol];
+
+  if (
+    !usuarioConfigurado ||
+    usuario !== usuarioConfigurado.usuario ||
+    password !== usuarioConfigurado.password
+  ) {
+
+    return res.status(401).json({
+      error: "Credenciales incorrectas"
+    });
+
+  }
+
+  res.json({
+
+    mensaje: "Inicio de sesión correcto",
+
+    usuario: {
+      usuario: usuarioConfigurado.usuario,
+      rol: usuarioConfigurado.rol
+    }
+
+  });
+
+});
+
 // ===================== EMPLEADOS =====================
 
 app.get("/api/empleados", (req, res) => {
@@ -805,82 +865,6 @@ app.delete(
 );
 
 
-// ===================== HISTORIAL DE ETAPAS =====================
-
-// OBTENER HISTORIAL DE UN EMPLEADO
-
-app.get("/api/empleados/:id/historial", (req, res) => {
-
-  const empleadoId =
-    Number(req.params.id);
-
-  const historial = db.prepare(`
-    SELECT *
-    FROM historial_etapas
-    WHERE empleado_id = ?
-    ORDER BY id ASC
-  `).all(empleadoId);
-
-  res.json(historial);
-
-});
-
-
-// CREAR REGISTRO DE HISTORIAL
-
-app.post("/api/empleados/:id/historial", (req, res) => {
-
-  const empleadoId =
-    Number(req.params.id);
-
-  const {
-    etapa
-  } = req.body;
-
-  if (!etapa) {
-
-    return res.status(400).json({
-      error: "La etapa es obligatoria"
-    });
-
-  }
-
-  const empleado = db
-    .prepare("SELECT id FROM empleados WHERE id = ?")
-    .get(empleadoId);
-
-  if (!empleado) {
-
-    return res.status(404).json({
-      error: "Empleado no encontrado"
-    });
-
-  }
-
-  const fechaCambio =
-    new Date().toLocaleString();
-
-  const resultado = db.prepare(`
-    INSERT INTO historial_etapas (
-      empleado_id,
-      etapa,
-      fechaCambio
-    )
-    VALUES (?, ?, ?)
-  `).run(
-    empleadoId,
-    etapa,
-    fechaCambio
-  );
-
-  res.status(201).json({
-    mensaje: "Historial registrado correctamente",
-    id: resultado.lastInsertRowid
-  });
-
-});
-
-
 // ELIMINAR REGISTRO DEL HISTORIAL
 
 app.delete(
@@ -917,6 +901,91 @@ app.delete(
   }
 );
 
+
+// ===================== HISTORIAL GENERAL =====================
+
+// OBTENER HISTORIAL
+
+app.get("/api/historial", (req, res) => {
+
+  const historial = db.prepare(`
+    SELECT *
+    FROM historial
+    ORDER BY id DESC
+    LIMIT 20
+  `).all();
+
+  res.json(historial);
+
+});
+
+
+// CREAR REGISTRO DE HISTORIAL
+
+app.post("/api/historial", (req, res) => {
+
+  const { mensaje } = req.body;
+
+  if (!mensaje || !mensaje.trim()) {
+
+    return res.status(400).json({
+      error: "El mensaje es obligatorio"
+    });
+
+  }
+
+  const fecha =
+    new Date().toLocaleString();
+
+  const resultado = db.prepare(`
+    INSERT INTO historial (
+      mensaje,
+      fecha
+    )
+    VALUES (?, ?)
+  `).run(
+    mensaje.trim(),
+    fecha
+  );
+
+  // Mantener solamente los últimos 20 registros
+
+  db.prepare(`
+    DELETE FROM historial
+    WHERE id NOT IN (
+      SELECT id
+      FROM historial
+      ORDER BY id DESC
+      LIMIT 20
+    )
+  `).run();
+
+  res.status(201).json({
+
+    mensaje: "Historial registrado correctamente",
+
+    id: resultado.lastInsertRowid,
+
+    fecha
+
+  });
+
+});
+
+
+// ELIMINAR TODO EL HISTORIAL
+
+app.delete("/api/historial", (req, res) => {
+
+  db.prepare(`
+    DELETE FROM historial
+  `).run();
+
+  res.json({
+    mensaje: "Historial eliminado correctamente"
+  });
+
+});
 
 // ===================== INICIAR SERVIDOR =====================
 

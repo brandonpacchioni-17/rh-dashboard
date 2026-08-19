@@ -32,7 +32,10 @@ import { cargarAreas } from "./ui.js";
 
 import { areas } from "./areas.js";
 
-import { limpiarHistorial } from "./historial.js";
+import {
+  limpiarHistorial,
+  cargarHistorial
+} from "./historial.js";
 
 import {
   abrirPerfil,
@@ -417,7 +420,7 @@ if (seccionActiva === "actividades") {
 
 // ===================== LOGIN =====================
 
-window.iniciarSesion = () => {
+window.iniciarSesion = async () => {
 
   const usuario =
     document.getElementById("loginUsuario").value;
@@ -428,23 +431,31 @@ window.iniciarSesion = () => {
   const password =
     document.getElementById("loginPassword").value;
 
-  const resultado = login(usuario, password, rol);
+  const resultado =
+    await login(usuario, password, rol);
 
   const error =
     document.getElementById("loginError");
 
   if (!resultado.success) {
 
+    error.innerText =
+      resultado.mensaje || "Credenciales incorrectas";
+
     error.classList.remove("hidden");
 
     return;
+
   }
+
+  error.classList.add("hidden");
 
   mostrarSistema();
 
   actualizarVista();
 
   render();
+
 };
 
 // ===================== MOSTRAR SISTEMA =====================
@@ -590,7 +601,20 @@ if (selectEtapa) {
 
 validarFechaIngreso();
 
+
 // ===================== INIT =====================
+
+cargarHistorial();
+
+window.addEventListener(
+  "historial-actualizado",
+  () => {
+
+    render();
+
+  }
+);
+
 if (
   localStorage.getItem("darkMode") === "activo" &&
   document.getElementById("container")
