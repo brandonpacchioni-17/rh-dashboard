@@ -521,16 +521,14 @@ app.put("/api/postulantes/:id/deshacer", (req, res) => {
 
 app.get("/api/empleados/:id/historial", (req, res) => {
 
-  const empleadoId =
-    Number(req.params.id);
+  const empleadoId = Number(req.params.id);
 
-  const historial =
-    db.prepare(`
-      SELECT *
-      FROM historial_etapas
-      WHERE empleadoId = ?
-      ORDER BY id ASC
-    `).all(empleadoId);
+  const historial = db.prepare(`
+    SELECT *
+    FROM historial_etapas
+    WHERE empleado_id = ?
+    ORDER BY id ASC
+  `).all(empleadoId);
 
   res.json(historial);
 
@@ -541,11 +539,9 @@ app.get("/api/empleados/:id/historial", (req, res) => {
 
 app.post("/api/empleados/:id/historial", (req, res) => {
 
-  const empleadoId =
-    Number(req.params.id);
+  const empleadoId = Number(req.params.id);
 
-  const { etapa } =
-    req.body;
+  const { etapa } = req.body;
 
   if (!etapa) {
 
@@ -555,12 +551,13 @@ app.post("/api/empleados/:id/historial", (req, res) => {
 
   }
 
-  const empleado =
-    db.prepare(`
+  const empleado = db
+    .prepare(`
       SELECT id
       FROM empleados
       WHERE id = ?
-    `).get(empleadoId);
+    `)
+    .get(empleadoId);
 
   if (!empleado) {
 
@@ -570,31 +567,24 @@ app.post("/api/empleados/:id/historial", (req, res) => {
 
   }
 
-  const fechaCambio =
-    new Date().toLocaleString();
+  const fechaCambio = new Date().toLocaleString();
 
-  const resultado =
-    db.prepare(`
-      INSERT INTO historial_etapas (
-        empleadoId,
-        etapa,
-        fechaCambio
-      )
-      VALUES (?, ?, ?)
-    `).run(
-      empleadoId,
+  const resultado = db.prepare(`
+    INSERT INTO historial_etapas (
+      empleado_id,
       etapa,
       fechaCambio
-    );
+    )
+    VALUES (?, ?, ?)
+  `).run(
+    empleadoId,
+    etapa,
+    fechaCambio
+  );
 
   res.status(201).json({
-
-    mensaje:
-      "Historial registrado correctamente",
-
-    id:
-      resultado.lastInsertRowid
-
+    mensaje: "Historial registrado correctamente",
+    id: resultado.lastInsertRowid
   });
 
 });

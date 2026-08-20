@@ -1269,11 +1269,16 @@ export async function registroAutomatico() {
 
 }
 
-export function actualizarActividad(index, valor) {
+export async function actualizarActividad(index, valor) {
 
-  actividades[index].actividad = valor;
+  const actividad = actividades[index];
 
-  guardarActividades();
+  if (!actividad)
+    return;
+
+  actividad.actividad = valor;
+
+  await actualizarActividadBackend(actividad);
 
   renderActividades();
 
@@ -1405,26 +1410,64 @@ export function cerrarModalEliminarActividad() {
 
 }
 
-export function eliminarActividad() {
+export async function eliminarActividad() {
 
   if (indexActividadEliminar === null)
     return;
 
-  actividades.splice(
-    indexActividadEliminar,
-    1
-  );
+  const actividad = actividades[indexActividadEliminar];
 
-  guardarActividades();
+  if (!actividad)
+    return;
 
-  renderActividades();
+  try {
 
-  cerrarModalEliminarActividad();
+    const respuesta = await fetch(
+      `http://localhost:3000/api/actividades/${actividad.id}`,
+      {
+        method: "DELETE"
+      }
+    );
 
-  notificar(
-    "Actividad eliminada",
-    "error"
-  );
+    const resultado = await respuesta.json();
+
+    if (!respuesta.ok) {
+
+      throw new Error(
+        resultado.error ||
+        "No se pudo eliminar la actividad"
+      );
+
+    }
+
+    // Eliminar también de la memoria del navegador
+    actividades.splice(
+      indexActividadEliminar,
+      1
+    );
+
+    renderActividades();
+
+    cerrarModalEliminarActividad();
+
+    notificar(
+      "Actividad eliminada correctamente",
+      "success"
+    );
+
+  } catch (error) {
+
+    console.error(
+      "Error al eliminar actividad:",
+      error
+    );
+
+    notificar(
+      "No se pudo eliminar la actividad",
+      "error"
+    );
+
+  }
 
 }
 

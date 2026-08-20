@@ -2,6 +2,13 @@
 
 export let actividades = [];
 
+// ===================== ACTUALIZAR INTERFAZ =====================
+
+function notificarActualizacion() {
+  window.dispatchEvent(
+    new CustomEvent("actividadesActualizadas")
+  );
+}
 
 // ===================== CARGAR ACTIVIDADES =====================
 
@@ -130,6 +137,8 @@ export async function actualizarActividad(index, valor) {
       resultado
     );
 
+    notificarActualizacion();
+
   } catch (error) {
 
     console.error(
@@ -183,6 +192,8 @@ export async function actualizarFechaInicio(index, valor) {
       "Fecha de inicio actualizada:",
       resultado
     );
+
+    notificarActualizacion();
 
   } catch (error) {
 
@@ -238,6 +249,8 @@ export async function actualizarFechaFin(index, valor) {
       resultado
     );
 
+    notificarActualizacion();
+
   } catch (error) {
 
     console.error(
@@ -291,6 +304,8 @@ export async function actualizarEstado(index, valor) {
       "Estado actualizado:",
       resultado
     );
+
+    notificarActualizacion();
 
   } catch (error) {
 
@@ -346,6 +361,8 @@ export async function actualizarEstadoEmpleado(index, valor) {
       resultado
     );
 
+    notificarActualizacion();
+
   } catch (error) {
 
     console.error(
@@ -391,6 +408,8 @@ export async function eliminarActividad(index) {
       "Actividad eliminada correctamente:",
       resultado
     );
+
+    notificarActualizacion();
 
   } catch (error) {
 

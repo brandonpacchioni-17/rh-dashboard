@@ -52,6 +52,14 @@ import {
 import "./postulacion.js";
 
 
+// ===================== ACTUALIZACIÓN EN TIEMPO REAL =====================
+
+window.addEventListener(
+  "actividadesActualizadas",
+  () => {
+    render();
+  }
+);
 
 
 function renderSugerencias(valor) {
